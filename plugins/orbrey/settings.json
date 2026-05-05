@@ -1,0 +1,16 @@
+{
+  "userConfig": {
+    "orbrey_mcp_url": {
+      "description": "Orbrey MCP server URL (e.g. https://mcp.orbrey.app/mcp). Defaults to the production worker.",
+      "default": "https://mcp.orbrey.app/mcp"
+    },
+    "orbrey_oauth_token": {
+      "description": "OAuth bearer token for the orbrey-mcp worker. Generate via the Orbrey app's Settings → Integrations screen.",
+      "secret": true
+    },
+    "default_household_id": {
+      "description": "Default household UUID to target when a skill does not specify one explicitly. Optional — when unset, skills will list available households.",
+      "default": ""
+    }
+  }
+}

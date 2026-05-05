@@ -1,0 +1,9 @@
+{
+  "name": "orbrey",
+  "version": "0.1.0",
+  "description": "10 skills + 3 agents + 6 commands for running an Orbrey household — meal planning, grocery, chores, routines, family scheduling, calendar conflicts, and rewards. Uses the orbrey-mcp Cloudflare Worker for live household data.",
+  "author": {
+    "name": "Orbrey",
+    "email": "support@orbrey.app"
+  }
+}

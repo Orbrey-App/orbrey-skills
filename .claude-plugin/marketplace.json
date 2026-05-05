@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "orbrey",
+  "description": "Official Orbrey plugin marketplace — household automation skills, agents, and commands that run on top of the orbrey-mcp Cloudflare Worker (meal planning, grocery, chores, routines, calendar, rewards).",
+  "owner": {
+    "name": "Orbrey",
+    "email": "support@orbrey.app"
+  },
+  "plugins": [
+    {
+      "name": "orbrey",
+      "version": "0.1.0",
+      "description": "10 skills + 3 agents + 6 commands for running an Orbrey household — meal planning, grocery, chores, routines, family scheduling, calendar conflicts, and rewards. Bundles the orbrey-mcp Cloudflare Worker for live household data.",
+      "source": "./plugins/orbrey",
+      "category": "household",
+      "homepage": "https://github.com/orbrey/orbrey-claude-plugins/tree/main/plugins/orbrey"
+    }
+  ]
+}

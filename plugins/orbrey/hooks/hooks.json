@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__orbrey__.*(delete|merge|adjust).*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/confirm-destructive.sh\"",
+            "timeout": 5,
+            "statusMessage": "Reviewing destructive Orbrey call..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "mcp__orbrey__recipes_create",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/suggest-meal-slot.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
