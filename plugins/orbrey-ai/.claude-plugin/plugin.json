@@ -1,9 +1,17 @@
 {
   "name": "orbrey-ai",
-  "version": "0.1.0",
-  "description": "10 skills + 3 agents + 6 commands for running an Orbrey household — meal planning, grocery, chores, routines, family scheduling, calendar conflicts, and rewards. Uses the orbrey-mcp Cloudflare Worker for live household data.",
+  "version": "0.2.0",
+  "description": "10 skills + 3 agents + 6 commands for running an Orbrey household — meal planning, grocery, chores, routines, family scheduling, calendar conflicts, and rewards. Connects to the orbrey-mcp Cloudflare Worker over HTTP with OAuth handled by Claude Code.",
   "author": {
     "name": "Orbrey",
     "email": "support@orbrey.com"
+  },
+  "userConfig": {
+    "default_household_id": {
+      "type": "string",
+      "title": "Default household UUID (optional)",
+      "description": "Optional. When you have multiple households, set this to skip the disambiguation prompt. Otherwise the worker auto-resolves the household from your active grants. You can also set this server-side via the households.set_default MCP tool, which persists across sessions.",
+      "required": false
+    }
   }
 }

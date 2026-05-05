@@ -2,7 +2,7 @@
 
 Run your household from inside Claude Code. Ten domain skills, three agents, and six slash commands wrap the [Orbrey](https://orbrey.app) MCP server so Claude can plan meals, organise the grocery list, rotate chores fairly, build family routines, find calendar conflicts, and manage rewards — all backed by live household data.
 
-This plugin assumes you already have an Orbrey household and an OAuth token for the orbrey-mcp Cloudflare Worker.
+This plugin assumes you already have an Orbrey household. Authentication is handled by Claude Code's built-in OAuth flow against the orbrey-mcp Cloudflare Worker — you do not need to generate or paste a bearer token.
 
 ---
 
@@ -50,19 +50,25 @@ This plugin assumes you already have an Orbrey household and an OAuth token for 
 
 ```bash
 # Add the orbrey marketplace if you have not already
-/plugin marketplace add orbrey/orbrey-skills
+/plugin marketplace add orbrey/orbrey-ai-marketplace
 
 # Install the plugin
 /plugin install orbrey-ai@orbrey-ai-marketplace
 ```
 
-After install, open `/plugin config orbrey-ai@orbrey-ai-marketplace` and supply:
+That's it. The plugin bundles the `orbrey` MCP server pointing at `https://mcp.orbrey.com/mcp` — no manual token paste required.
 
-- **`orbrey_oauth_token`** — bearer token from the Orbrey app (Settings → Integrations → Generate token)
-- **`default_household_id`** — *(optional)* the household UUID you usually work with
-- **`orbrey_mcp_url`** — *(optional)* override the MCP endpoint (defaults to `https://mcp.orbrey.app/mcp`)
+### First-time authentication
 
-Then restart Claude Code so the bundled MCP server picks up the credentials.
+The first time a skill or command needs the MCP, run `/mcp` and follow the browser OAuth flow. Claude Code stores the access token securely (system keychain, or `~/.claude/.credentials.json` where the keychain is unavailable) and refreshes it automatically.
+
+> **Note** — if you've already authorised Orbrey via Claude.ai's web Settings → Connectors, you'll still be asked to authorise once more in Claude Code. The two products keep separate token stores; this is expected. After the first `/mcp` flow you won't be asked again.
+
+### Optional configuration
+
+Open `/plugin config orbrey-ai@orbrey-ai-marketplace` to set:
+
+- **`default_household_id`** — *(optional)* the household UUID you usually work with. Skip this and the worker auto-resolves the household from your active OAuth grants. For a persistent server-side default that survives plugin reinstalls, call the `households.set_default` MCP tool instead.
 
 ---
 
@@ -105,7 +111,17 @@ Each skill's output is markdown-first and can be passed verbatim into another sk
 
 ## MCP tool surface
 
-The plugin binds the **orbrey** MCP server, which exposes 14 tools covering tasks, lists, calendar, recipes, grocery, and rewards. All tools take a `household_id` UUID and respect OAuth scopes (`tasks:read/write`, `lists:read/write`, `calendar:read/write`, `recipes:read/write`, `grocery:read/write`, `rewards:read/write`).
+The plugin binds the **orbrey** MCP server at `https://mcp.orbrey.com/mcp`, which exposes 21 tools across:
+
+- **Discovery** — `households.list`, `households.set_default`
+- **Tasks** — `tasks.list`, `tasks.set_status`, `tasks.delete_occurrence`
+- **Lists** — `lists.list`, `lists.create`, `lists.add_item`, `lists.delete`
+- **Calendar** — `calendar.list`, `calendar.create_event`, `calendar.sync_import`, `calendar.sync_export`
+- **Recipes** — `recipes.list`, `recipes.create`, `recipes.delete`
+- **Grocery** — `grocery.list`, `grocery.add_item`, `grocery.merge`
+- **Rewards** — `rewards.wallets`, `rewards.adjust`
+
+`household_id` is optional on every tool — the worker resolves it from your active OAuth grants (default household if set, otherwise the only authorised household). The bearer's grant scopes determine what's callable; paid scopes (`pantry:*`, `rewards:*`, `household:admin`) require an Orbrey Plus subscription on the resolved household.
 
 For the authoritative tool list, see [`workers/orbrey-mcp/src/mcp/toolRegistry.ts`](https://github.com/orbrey/orbrey/blob/main/workers/orbrey-mcp/src/mcp/toolRegistry.ts) in the Orbrey monorepo.
 

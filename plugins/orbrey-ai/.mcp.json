@@ -1,9 +1,8 @@
 {
-  "orbrey": {
-    "type": "http",
-    "url": "${user_config.orbrey_mcp_url}",
-    "headers": {
-      "Authorization": "Bearer ${user_config.orbrey_oauth_token}"
+  "mcpServers": {
+    "orbrey": {
+      "type": "http",
+      "url": "https://mcp.orbrey.com/mcp"
     }
   }
 }

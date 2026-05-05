@@ -9,8 +9,8 @@
   "plugins": [
     {
       "name": "orbrey-ai",
-      "version": "0.1.0",
-      "description": "10 skills + 3 agents + 6 commands for running an Orbrey household — meal planning, grocery, chores, routines, family scheduling, calendar conflicts, and rewards. Bundles the orbrey-mcp Cloudflare Worker for live household data.",
+      "version": "0.2.0",
+      "description": "10 skills + 3 agents + 6 commands for running an Orbrey household — meal planning, grocery, chores, routines, family scheduling, calendar conflicts, and rewards. Connects to the orbrey-mcp Cloudflare Worker over HTTP with OAuth handled by Claude Code.",
       "source": "./plugins/orbrey-ai",
       "category": "household",
       "homepage": "https://github.com/orbrey/orbrey-skills/tree/main/plugins/orbrey-ai"
