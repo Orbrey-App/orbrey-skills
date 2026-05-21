@@ -1,0 +1,71 @@
+{
+  "skill_name": "grocery-organizer",
+  "plugin_name": "orbrey-ai",
+  "target_dir": "C:/Development/@orbrey/orbrey-ai-marketplace/plugins/orbrey-ai/skills/grocery-organizer",
+  "evaluation_date": "2026-05-21",
+  "mode": "full",
+  "score": {
+    "total_raw": 113.2,
+    "total_max": 115,
+    "normalised_100": 98,
+    "grade": "A"
+  },
+  "dimensions": {
+    "discovery_metadata": { "score": 20.0, "weight": 20, "deterministic": 15, "qualitative": 5, "grade": "A" },
+    "scope_focus": { "score": 15.0, "weight": 15, "deterministic": 9, "qualitative": 6, "grade": "A" },
+    "conciseness": { "score": 15.0, "weight": 15, "deterministic": 12, "qualitative": 3, "grade": "A" },
+    "information_architecture": { "score": 14.0, "weight": 15, "deterministic": 10, "qualitative": 4, "grade": "A" },
+    "content_quality": { "score": 15.0, "weight": 15, "deterministic": 8, "qualitative": 7, "grade": "A" },
+    "tool_security": { "score": 10.0, "weight": 10, "deterministic": 10, "qualitative": 0, "grade": "A" },
+    "testing_examples": { "score": 6.2, "weight": 7, "deterministic": 3, "qualitative": 3.2, "grade": "A" },
+    "standards": { "score": 3.0, "weight": 3, "deterministic": 3, "qualitative": 0, "grade": "A" },
+    "activation_behavioural": { "score": 10.0, "weight": 10, "deterministic": 10, "qualitative": 0, "grade": "A" },
+    "antipatterns": { "score": 5.0, "weight": 5, "deterministic": 5, "qualitative": 0, "grade": "A" }
+  },
+  "findings": [
+    {
+      "id": "QUAL-EX-COVERAGE",
+      "dimension": "testing_examples",
+      "severity": "info",
+      "title": "Single example covers only the happy path",
+      "file": "examples/example-output.md",
+      "line": null,
+      "evidence": "Only one example file present; covers successful merge flow",
+      "fix": "Add examples/example-decline.md showing user declining a Medium-confidence merge",
+      "source": "qualitative"
+    },
+    {
+      "id": "QUAL-ARGHINT",
+      "dimension": "information_architecture",
+      "severity": "info",
+      "title": "argument-hint could enumerate recognised stores",
+      "file": "SKILL.md",
+      "line": 4,
+      "evidence": "argument-hint: [optional-store-name-or-style]",
+      "fix": "Replace with [woolworths|coles|aldi|iga|costco|other] for clarity",
+      "source": "qualitative"
+    },
+    {
+      "id": "QUAL-PHASE6-TRIGGER",
+      "dimension": "activation_behavioural",
+      "severity": "info",
+      "title": "Phase 6 pantry sync opt-in trigger is implicit",
+      "file": "SKILL.md",
+      "line": 105,
+      "evidence": "If the user asked to include pantry items, call orbrey:lists.list...",
+      "fix": "Specify the exact keyword, flag, or question that gates pantry sync",
+      "source": "qualitative"
+    }
+  ],
+  "prioritised_fixes": ["QUAL-EX-COVERAGE", "QUAL-ARGHINT", "QUAL-PHASE6-TRIGGER"],
+  "structural_pass": true,
+  "heuristic_pass": true,
+  "security_pass": true,
+  "files_evaluated": [
+    { "path": "SKILL.md", "lines": 141, "size": 5796 },
+    { "path": "reference.md", "lines": 69, "size": 2460 },
+    { "path": "templates/output-template.md", "lines": 81, "size": 1351 },
+    { "path": "examples/example-output.md", "lines": 107, "size": 2219 },
+    { "path": "LICENSE.txt", "lines": 202, "size": 11337 }
+  ]
+}

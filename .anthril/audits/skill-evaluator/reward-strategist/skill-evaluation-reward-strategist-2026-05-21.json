@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0",
+  "skill_name": "reward-strategist",
+  "plugin_name": "orbrey-ai",
+  "target_dir": "C:/Development/@orbrey/orbrey-ai-marketplace/plugins/orbrey-ai/skills/reward-strategist",
+  "date": "2026-05-21",
+  "mode": "full",
+  "score": {
+    "total_raw": 99,
+    "total_cap": 115,
+    "total_normalised_100": 86,
+    "grade": "A",
+    "grade_normalised": "B"
+  },
+  "dimensions": {
+    "discovery_metadata": { "score": 18, "cap": 20, "grade": "A" },
+    "scope_focus":        { "score": 14, "cap": 15, "grade": "A" },
+    "conciseness":        { "score": 15, "cap": 15, "grade": "A" },
+    "information_architecture": { "score": 13, "cap": 15, "grade": "B" },
+    "content_quality":    { "score": 14, "cap": 15, "grade": "A" },
+    "tool_security":      { "score": 10, "cap": 10, "grade": "A" },
+    "testing_examples":   { "score": 5,  "cap": 7,  "grade": "C" },
+    "standards":          { "score": 3,  "cap": 3,  "grade": "A" },
+    "activation_behavioural": { "score": 9, "cap": 10, "grade": "A" },
+    "anti_patterns":      { "score": 5,  "cap": 5,  "grade": "A" }
+  },
+  "files": [
+    { "path": "SKILL.md", "size": 5235, "lines": 129 },
+    { "path": "LICENSE.txt", "size": 11337, "lines": 202 },
+    { "path": "examples/example-output.md", "size": 3989, "lines": 118 },
+    { "path": "templates/output-template.md", "size": 2040, "lines": 83 }
+  ],
+  "frontmatter": {
+    "name": "reward-strategist",
+    "description": "Design reward catalogues and earning rules. Balances allowance vs chore credits, projects wallet trajectories 4/8/12 weeks out, and suggests milestone bonuses.",
+    "argument-hint": "[household-context]",
+    "allowed-tools": "Read Write Edit",
+    "effort": "high"
+  },
+  "structural_checks": {
+    "C01_description_length": { "value": 184, "status": "pass" },
+    "C02_description_min":    { "status": "pass" },
+    "C05_name_kebab":         { "status": "pass" },
+    "C06_name_length":        { "value": 17, "status": "pass" },
+    "C07_name_not_reserved":  { "status": "pass" },
+    "C08_name_matches_basename": { "status": "pass" },
+    "C09_required_fields":    { "status": "pass" },
+    "C10_effort_valid":       { "value": "high", "status": "pass" },
+    "C14_line_count":         { "value": 129, "status": "pass" },
+    "C20_referenced_paths":   { "status": "pass" },
+    "C28_examples_present":   { "status": "pass" },
+    "C29_templates_present":  { "status": "pass" },
+    "C33_license_present":    { "status": "pass" },
+    "C34_yaml_valid":         { "status": "pass" }
+  },
+  "heuristic_checks": {
+    "C25_C27_secrets":  { "status": "pass" },
+    "C31_aus_english":  { "status": "pass" },
+    "C32_banned_phrases": { "status": "pass" },
+    "C41_C45_antipatterns": { "status": "pass" },
+    "file_naming_kebab": { "status": "pass" }
+  },
+  "findings": [
+    {
+      "id": "C28-qualitative",
+      "dimension": "testing_examples",
+      "severity": "warn",
+      "title": "Only one example provided; edge cases not demonstrated",
+      "file": "examples/example-output.md",
+      "line": "1-118",
+      "evidence": "Single example covers a 3-child hybrid household. SKILL.md:123-129 enumerates 5 edge cases (single-child, wide age range, pre-existing high balance, no-chore-credit, religious constraints) — none have example outputs.",
+      "fix": "Add 2-3 edge-case example files (examples/example-single-child.md, examples/example-wide-age-range.md, examples/example-no-chore-credit.md) to anchor the model on harder configurations.",
+      "source": "heuristic"
+    },
+    {
+      "id": "C36",
+      "dimension": "activation_behavioural",
+      "severity": "warn",
+      "title": "Description lacks explicit activation trigger",
+      "file": "SKILL.md",
+      "line": 3,
+      "evidence": "Description describes what the skill does but does not front-load a 'use when' clause that helps Claude's auto-selection.",
+      "fix": "Lead with 'Use when designing or auditing a household reward/allowance system. Designs reward catalogues and earning rules...'",
+      "source": "heuristic"
+    },
+    {
+      "id": "C18",
+      "dimension": "information_architecture",
+      "severity": "info",
+      "title": "No reference.md for deep-dive content",
+      "file": null,
+      "line": null,
+      "evidence": "All design rationale lives in SKILL.md. Future expansion (age-band tables, milestone-pricing maths, behavioural-economics citations) will push past 500-line cap.",
+      "fix": "Create reference.md for developmental-stage tables, milestone-scale rules, AUD conversion guidance.",
+      "source": "heuristic"
+    },
+    {
+      "id": "C19",
+      "dimension": "information_architecture",
+      "severity": "info",
+      "title": "No mermaid/visual diagram",
+      "file": "SKILL.md",
+      "line": null,
+      "evidence": "6-phase skill with no visual flowchart of phase sequencing.",
+      "fix": "Add a small mermaid diagram in a 'Visual Output' section after Phase 6.",
+      "source": "heuristic"
+    },
+    {
+      "id": "C40",
+      "dimension": "content_quality",
+      "severity": "info",
+      "title": "Template uses Mustache-style placeholders",
+      "file": "templates/output-template.md",
+      "line": "1-83",
+      "evidence": "Uses {{var}} placeholders.",
+      "fix": "Confirm consistency with other Orbrey templates; consider [var] if that is the plugin convention.",
+      "source": "heuristic"
+    },
+    {
+      "id": "C45",
+      "dimension": "tool_security",
+      "severity": "info",
+      "title": "allowed-tools does not enumerate orbrey MCP tools referenced in body",
+      "file": "SKILL.md",
+      "line": 5,
+      "evidence": "Body references orbrey:rewards.wallets (line 52), orbrey:tasks.list (line 53), rewards.adjust (line 108). allowed-tools field only lists 'Read Write Edit'.",
+      "fix": "Confirm if Orbrey plugin auto-exposes these tools; if not, add them to allowed-tools explicitly.",
+      "source": "heuristic"
+    }
+  ],
+  "prioritised_fixes": ["C28-qualitative", "C36", "C18", "C19", "C40", "C45"]
+}

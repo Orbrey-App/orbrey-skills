@@ -11,6 +11,17 @@
             "statusMessage": "Reviewing destructive Orbrey call..."
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/confirm-grocery-order.sh\"",
+            "timeout": 5,
+            "statusMessage": "Reviewing grocery order before checkout..."
+          }
+        ]
       }
     ],
     "PostToolUse": [

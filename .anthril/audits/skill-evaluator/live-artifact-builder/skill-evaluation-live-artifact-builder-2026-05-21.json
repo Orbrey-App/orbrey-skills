@@ -1,0 +1,64 @@
+{
+  "skill": "live-artifact-builder",
+  "plugin": "orbrey-ai",
+  "target_dir": "C:/Development/@orbrey/orbrey-ai-marketplace/plugins/orbrey-ai/skills/live-artifact-builder",
+  "evaluated_at": "2026-05-21",
+  "evaluator_version": "skill-ops/skill-evaluator 2.0.0",
+  "mode": "full",
+  "score": 114,
+  "max_score": 115,
+  "grade": "A",
+  "dimensions": {
+    "discovery_metadata":            { "score": 20, "weight": 20, "grade": "A" },
+    "scope_focus":                   { "score": 15, "weight": 15, "grade": "A" },
+    "conciseness":                   { "score": 15, "weight": 15, "grade": "A" },
+    "information_architecture":      { "score": 15, "weight": 15, "grade": "A" },
+    "content_quality":               { "score": 14, "weight": 15, "grade": "A" },
+    "tool_security":                 { "score": 10, "weight": 10, "grade": "A" },
+    "testing_examples":              { "score":  7, "weight":  7, "grade": "A" },
+    "standards_compliance":          { "score":  3, "weight":  3, "grade": "A" },
+    "activation_behavioural":        { "score": 10, "weight": 10, "grade": "A" },
+    "anti_patterns":                 { "score":  5, "weight":  5, "grade": "A" }
+  },
+  "frontmatter": {
+    "name":           { "value": "live-artifact-builder", "status": "pass" },
+    "description":    { "value_length": 359, "status": "pass" },
+    "argument_hint":  { "value": "[artifact concept]", "status": "pass" },
+    "allowed_tools":  { "value": "Read, Write, Edit, Glob, Grep, AskUserQuestion", "status": "pass" },
+    "effort":         { "value": "medium", "status": "pass" }
+  },
+  "findings": [
+    {
+      "id": "qualitative-error-handling",
+      "dimension": "content_quality",
+      "severity": "info",
+      "title": "Per-phase error notes are implicit",
+      "file": "plugins/orbrey-ai/skills/live-artifact-builder/SKILL.md",
+      "line": 99,
+      "evidence": "'If any check fails, fix and re-render. Never ship a known-broken artifact.' — leaves Phase 2 and 3 failure paths to inference. Edge Cases table covers macro-cases but not per-phase failures.",
+      "fix": "Add a single 'If X, do Y' line inside Phases 2 and 3 (e.g. Phase 3: 'If a CDN tag 404s on validation, fall back to the next preferred CDN before re-emitting the block').",
+      "source": "qualitative"
+    }
+  ],
+  "qualitative_scores": {
+    "discovery_metadata":            5,
+    "scope_focus":                   5,
+    "actionability":                 5,
+    "example_realism":               5,
+    "conciseness":                   5,
+    "terminology_consistency":       5,
+    "phase_sequencing":              5,
+    "error_handling":                4
+  },
+  "files_inspected": [
+    { "path": "SKILL.md",                         "lines": 172, "size_bytes": 8206 },
+    { "path": "reference.md",                     "lines": 137, "size_bytes": 7290 },
+    { "path": "LICENSE.txt",                      "lines": 202, "size_bytes": 11337 },
+    { "path": "templates/output-template.md",     "lines": 139, "size_bytes": 4283 },
+    { "path": "examples/calculator.md",           "lines": 146, "size_bytes": 6458 },
+    { "path": "examples/dashboard.md",            "lines": 184, "size_bytes": 8772 },
+    { "path": "examples/form.md",                 "lines": 239, "size_bytes": 10950 }
+  ],
+  "prioritised_fixes": ["qualitative-error-handling"],
+  "summary": "A tightly-scoped, well-documented skill that produces a concrete single-file artefact, with realistic worked examples and clean separation between SKILL.md, reference lookup, templates, and examples; only minor qualitative trim possible around per-phase error notes."
+}

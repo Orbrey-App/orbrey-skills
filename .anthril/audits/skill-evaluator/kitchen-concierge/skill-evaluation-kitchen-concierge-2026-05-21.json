@@ -1,0 +1,96 @@
+{
+  "skill": "kitchen-concierge",
+  "plugin": "orbrey-ai",
+  "target_dir": "C:/Development/@orbrey/orbrey-ai-marketplace/plugins/orbrey-ai/skills/kitchen-concierge",
+  "evaluated_at": "2026-05-21",
+  "evaluator_version": "skill-ops/skill-evaluator 2.0.0",
+  "mode": "full",
+  "score": 111,
+  "max_score": 115,
+  "grade": "A",
+  "dimensions": {
+    "discovery_metadata":            { "score": 18, "weight": 20, "grade": "B" },
+    "scope_focus":                   { "score": 15, "weight": 15, "grade": "A" },
+    "conciseness":                   { "score": 15, "weight": 15, "grade": "A" },
+    "information_architecture":      { "score": 15, "weight": 15, "grade": "A" },
+    "content_quality":               { "score": 14, "weight": 15, "grade": "A" },
+    "tool_security":                 { "score": 10, "weight": 10, "grade": "A" },
+    "testing_examples":              { "score":  6, "weight":  7, "grade": "A" },
+    "standards_compliance":          { "score":  3, "weight":  3, "grade": "A" },
+    "activation_behavioural":        { "score": 10, "weight": 10, "grade": "A" },
+    "anti_patterns":                 { "score":  5, "weight":  5, "grade": "A" }
+  },
+  "frontmatter": {
+    "name":           { "value": "kitchen-concierge", "status": "pass" },
+    "description":    { "value_length": 382, "cap": 250, "status": "fail" },
+    "argument_hint":  { "value": "[setup | run | status]", "status": "pass" },
+    "allowed_tools":  { "format": "comma-separated YAML", "mcp_tools_declared": 13, "status": "pass" },
+    "effort":         { "value": "high", "status": "pass" }
+  },
+  "findings": [
+    {
+      "id": "C01",
+      "dimension": "discovery_metadata",
+      "severity": "fail",
+      "title": "Description exceeds 250-character cap",
+      "file": "plugins/orbrey-ai/skills/kitchen-concierge/SKILL.md",
+      "line": 3,
+      "evidence": "Description is 382 chars. Front-loading is strong but every supported store and the trigger condition are restated, pushing it over the cap.",
+      "fix": "Compress to one core sentence, e.g.: 'Your kitchen concierge — orchestrate weekly meal planning, pantry checks, grocery list building, notification, and ordering via Woolworths/Coles/Uber Eats. Use when the user wants set-and-forget food automation.' (~210 chars).",
+      "source": "structural"
+    },
+    {
+      "id": "one-edge-case",
+      "dimension": "testing_examples",
+      "severity": "info",
+      "title": "Only happy-path examples present",
+      "file": "plugins/orbrey-ai/skills/kitchen-concierge/examples/",
+      "line": null,
+      "evidence": "Two examples (example-setup.md, example-run.md) both walk the happy path. The Edge Cases table in SKILL.md lists 10 failure modes; only the failover case is exemplified inline at the bottom of example-run.md.",
+      "fix": "Add a third example walking the TFA-challenge path end-to-end (most user-impactful failure since manual remediation is needed). File: examples/example-failure-tfa.md.",
+      "source": "qualitative"
+    },
+    {
+      "id": "qualitative-no-failure-example",
+      "dimension": "content_quality",
+      "severity": "info",
+      "title": "Failure paths described but not exemplified",
+      "file": "plugins/orbrey-ai/skills/kitchen-concierge/SKILL.md",
+      "line": 277,
+      "evidence": "Edge Cases table is detailed (10 rows). Only the failover case has a worked example. Adapter failures, TFA challenges, and stale pantry data are described but not walked through.",
+      "fix": "Same fix as one-edge-case — single new example file closes both.",
+      "source": "qualitative"
+    }
+  ],
+  "qualitative_scores": {
+    "discovery_metadata":            4,
+    "scope_focus":                   5,
+    "actionability":                 5,
+    "example_realism":               4,
+    "conciseness":                   5,
+    "terminology_consistency":       5,
+    "phase_sequencing":              5,
+    "error_handling":                5
+  },
+  "files_inspected": [
+    { "path": "SKILL.md",                          "lines": 304, "role": "main skill doc" },
+    { "path": "reference.md",                      "lines": 163, "role": "reference lookup" },
+    { "path": "LICENSE.txt",                       "lines": 202, "role": "Apache 2.0" },
+    { "path": "templates/output-template.md",      "lines": 100, "role": "notification brief shape" },
+    { "path": "templates/cart-schema.json",        "lines":  67, "role": "JSON schema for cart input" },
+    { "path": "examples/example-setup.md",         "lines": 132, "role": "setup walkthrough" },
+    { "path": "examples/example-run.md",           "lines": 192, "role": "run transcript" },
+    { "path": "scripts/order_groceries.py",        "lines": 207, "role": "CLI entrypoint" },
+    { "path": "scripts/adapters/base.py",          "lines": 102, "role": "abstract adapter contract" },
+    { "path": "scripts/adapters/_template.py",     "lines":  79, "role": "stub for new stores" },
+    { "path": "scripts/adapters/woolworths.py",    "lines": 231, "role": "Woolworths implementation" },
+    { "path": "scripts/adapters/coles.py",         "lines": 197, "role": "Coles implementation" },
+    { "path": "scripts/adapters/uber_eats.py",     "lines": 217, "role": "Uber Eats implementation" },
+    { "path": "scripts/shared/cart.py",            "lines":  60, "role": "dataclasses" },
+    { "path": "scripts/shared/credentials.py",     "lines":  40, "role": "env-var-only credential loader" },
+    { "path": "scripts/shared/retry.py",           "lines":  38, "role": "exponential backoff helper" },
+    { "path": "scripts/README.md",                 "lines":  76, "role": "operator guide" }
+  ],
+  "prioritised_fixes": ["C01", "one-edge-case", "qualitative-no-failure-example"],
+  "summary": "Ambitious orchestrator skill with clean architecture: wraps existing orbrey-ai skills via Skill tool, adds scheduling + ordering + notification layers, exposes a pluggable Python adapter pattern with three concrete implementations and a stub. Only material finding: description exceeds 250-character cap. Everything else is tight — env-only credentials, no payment automation, MCP tools declared correctly in allowed-tools, AusE throughout, realistic two-stage example transcripts."
+}

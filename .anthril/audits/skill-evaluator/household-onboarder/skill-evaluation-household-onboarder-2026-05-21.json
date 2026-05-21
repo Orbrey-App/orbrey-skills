@@ -1,0 +1,75 @@
+{
+  "skill_name": "household-onboarder",
+  "plugin_name": "orbrey-ai",
+  "target_dir": "C:/Development/@orbrey/orbrey-ai-marketplace/plugins/orbrey-ai/skills/household-onboarder",
+  "evaluated_at": "2026-05-21",
+  "evaluator_version": "skill-ops/2.0.0",
+  "mode": "full",
+  "total_score": 106,
+  "total_max": 115,
+  "grade": "A",
+  "dimension_scores": {
+    "discovery_metadata":          { "score": 19, "weight": 20, "grade": "A", "deterministic": 15, "qualitative": 4 },
+    "scope_focus":                 { "score": 12, "weight": 15, "grade": "B", "deterministic": 6,  "qualitative": 6 },
+    "conciseness":                 { "score": 15, "weight": 15, "grade": "A", "deterministic": 12, "qualitative": 3 },
+    "information_architecture":    { "score": 10, "weight": 15, "grade": "C", "deterministic": 10, "qualitative": 0 },
+    "content_quality":             { "score": 15, "weight": 15, "grade": "A", "deterministic": 8,  "qualitative": 7 },
+    "tool_security":               { "score": 10, "weight": 10, "grade": "A", "deterministic": 10, "qualitative": 0 },
+    "testing_examples":            { "score": 7,  "weight": 7,  "grade": "A", "deterministic": 3,  "qualitative": 4 },
+    "standards_compliance":        { "score": 3,  "weight": 3,  "grade": "A", "deterministic": 3,  "qualitative": 0 },
+    "activation_behavioural":      { "score": 10, "weight": 10, "grade": "A", "deterministic": 10, "qualitative": 0 },
+    "anti_patterns":               { "score": 5,  "weight": 5,  "grade": "A", "deterministic": 5,  "qualitative": 0 }
+  },
+  "qualitative_scores": {
+    "discovery_metadata":        { "score": 4, "note": "Action verb 'Walk' clear but artefact ('Markdown checklist') named at tail." },
+    "scope_focus":               { "score": 5, "note": "Seven phases all serve the single onboarding flow; cross-skill mentions are next-actions, not prereqs." },
+    "conciseness":               { "score": 5, "note": "No generic preamble. Phases are 3–8 lines; rules and edge-cases concise." },
+    "information_architecture":  { "score": 0, "note": "Not applicable — no reference.md (correctly absent at 137 lines)." },
+    "content_quality":           { "score": 5, "note": "Terminology stable across all artefacts; phases sequence state forward cleanly." },
+    "tool_security":             { "score": 0, "note": "Not applicable to qualitative review." },
+    "testing_examples":          { "score": 5, "note": "Eli Donovan example fully populated with severe allergies, scope grants, wallet figures." },
+    "standards_compliance":      { "score": 0, "note": "Not applicable to qualitative review." }
+  },
+  "findings": [
+    {
+      "id": "C04",
+      "dimension": "discovery_metadata",
+      "severity": "warn",
+      "title": "Description lacks a canonical leading action verb",
+      "file": "SKILL.md",
+      "line": 3,
+      "evidence": "Walk a new member through joining an Orbrey household …",
+      "fix": "Lead with a canonical verb (Guide, Produce, Onboard, Create) — 'Walk' is action-shaped but outside the catalogue list.",
+      "source": "heuristic"
+    },
+    {
+      "id": "C13",
+      "dimension": "scope_focus",
+      "severity": "fail",
+      "title": "Description enumerates ≥4 comma-separated outputs (D2.2 fail)",
+      "file": "SKILL.md",
+      "line": 3,
+      "evidence": "profile, role, dietary prefs, calendar OAuth, allowance setup — 4 commas",
+      "fix": "Collapse to ≤3 primary outputs, e.g. 'capturing profile, dietary record, and scope grants — producing a Markdown record'.",
+      "source": "heuristic"
+    },
+    {
+      "id": "ARCH-INFO",
+      "dimension": "information_architecture",
+      "severity": "info",
+      "title": "No reference.md (correctly absent at 137 lines)",
+      "file": "target_dir",
+      "line": null,
+      "evidence": "SKILL.md is 137 lines; no dense tables; C44/D3.4 do not require extraction.",
+      "fix": "None required. If the skill grows beyond 350 lines, plan extraction of phase detail into reference.md.",
+      "source": "structural"
+    }
+  ],
+  "prioritised_fixes": ["C13", "C04", "ARCH-INFO"],
+  "files_inspected": [
+    { "path": "SKILL.md", "lines": 137, "size": 5273 },
+    { "path": "LICENSE.txt", "lines": 202, "size": 11337 },
+    { "path": "templates/output-template.md", "lines": 79, "size": 1921 },
+    { "path": "examples/example-output.md", "lines": 81, "size": 2167 }
+  ]
+}

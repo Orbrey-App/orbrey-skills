@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbrey.app/schemas/kitchen-concierge/cart.json",
+  "title": "Kitchen Concierge Cart",
+  "description": "Input payload for scripts/order_groceries.py. One cart per adapter invocation.",
+  "type": "object",
+  "required": ["items", "delivery_mode", "store_postcode"],
+  "additionalProperties": false,
+  "properties": {
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "quantity", "unit"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "description": "Plain-language item name (e.g. 'tomatoes', 'extra virgin olive oil')."
+          },
+          "quantity": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Numeric quantity in the chosen unit."
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["each", "g", "kg", "ml", "L", "pack", "bunch", "dozen", "loaf", "punnet"],
+            "description": "Unit of measure."
+          },
+          "max_price_aud": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "description": "Skip the item (or substitute) if unit price exceeds this. Optional."
+          },
+          "notes": {
+            "type": ["string", "null"],
+            "description": "Free-text hint for the adapter's search (e.g. 'organic', '500g pack', 'no brand X')."
+          },
+          "substitution": {
+            "type": "string",
+            "enum": ["allow", "ask", "deny"],
+            "default": "allow",
+            "description": "How the adapter handles out-of-stock items."
+          },
+          "recipe_source": {
+            "type": ["string", "null"],
+            "description": "Recipe name this ingredient came from. Used only for the log; ignored by the adapter."
+          }
+        }
+      }
+    },
+    "delivery_mode": {
+      "type": "string",
+      "enum": ["click-and-collect", "delivery"]
+    },
+    "store_postcode": {
+      "type": "string",
+      "pattern": "^[0-9]{4,5}$",
+      "description": "4-digit AU postcode or 5-digit US ZIP."
+    },
+    "store_id": {
+      "type": ["string", "null"],
+      "description": "Adapter-specific store identifier (Woolworths uses fulfilment-location IDs; Coles uses store codes). Optional — adapter falls back to nearest if absent."
+    },
+    "delivery_window": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "description": "Preferred delivery / pickup window. Adapter picks the nearest available slot if absent.",
+      "properties": {
+        "earliest_iso": { "type": "string", "format": "date-time" },
+        "latest_iso": { "type": "string", "format": "date-time" }
+      }
+    },
+    "substitution_tolerance": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.2,
+      "description": "Fraction of cart items allowed to be substituted/missing before adapter exits with code 30."
+    }
+  }
+}
