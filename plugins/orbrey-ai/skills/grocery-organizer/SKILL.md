@@ -2,7 +2,11 @@
 name: grocery-organizer
 description: Dedupe, categorise, and aisle-order the household grocery list. Folds duplicates via grocery.merge. Optionally pulls pantry shortages onto the list.
 argument-hint: [optional-store-name-or-style]
-allowed-tools: Read Write Edit
+allowed-tools: >
+  Read Write Edit AskUserQuestion
+  mcp__orbrey__households_list
+  mcp__orbrey__grocery_list mcp__orbrey__grocery_add_item mcp__orbrey__grocery_merge
+  mcp__orbrey__lists_list mcp__orbrey__lists_add_item
 effort: medium
 ---
 

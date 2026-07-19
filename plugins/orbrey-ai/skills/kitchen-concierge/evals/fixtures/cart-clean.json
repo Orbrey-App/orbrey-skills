@@ -1,0 +1,4 @@
+{ "items": [
+    { "name": "tomatoes", "quantity": 4, "unit": "each", "matched_product": "Tomatoes Truss 1kg", "unit_price_aud": 1.20, "max_price_aud": 2.00 },
+    { "name": "milk", "quantity": 2, "unit": "L", "matched_product": "Full Cream Milk 2L", "unit_price_aud": 3.10 }
+  ], "delivery_mode": "click-and-collect", "store_postcode": "2026" }

@@ -1,132 +1,85 @@
-# Example — End-to-end setup transcript
+# Example — `setup`
 
-A walkthrough of `/orbrey-ai:kitchen-concierge setup` for the Donovan household in Coogee, NSW.
+> **Illustrative, not a captured transcript.** Names, stores and figures are
+> invented to show the shape of the flow. Nothing here is a record of a real
+> run. (The 0.2.0 version of this file presented invented output as if it were
+> tested; that is why every example in 0.3.0 carries this banner.)
 
 ---
 
 **User:** `/orbrey-ai:kitchen-concierge setup`
 
-**Assistant:** Configuring the kitchen concierge for your household. Six quick questions.
+**Claude:**
 
-### 1. Cadence
+> Setting up your kitchen concierge. Six quick questions, then I'll register the
+> schedule.
+>
+> First — what's your postcode and suburb? I'll find the nearest stores.
 
-How often should the concierge run?
+**User:** 2026, Bondi
 
-- [x] **Weekly** (Sunday 18:00) — recommended
-- [ ] Fortnightly
-- [ ] Monthly
-- [ ] Custom cron string
+**Claude:** *(navigates the store finders in Chrome, then asks)*
 
-**User:** Weekly
+**S2** — "Which store should be your primary?" · `Store`
+→ `Woolworths Bondi` · `Coles Bondi Junction` · `Woolworths Waverley` · `Aldi Bondi Junction`
 
-### 2. Local grocery store
+**User:** Woolworths Bondi
 
-What's your postcode and suburb?
+**S3** — "And your fallback, if Woolworths is short?" · `Fallback`
+→ `Coles Bondi Junction` · `Woolworths Waverley` · `Aldi Bondi Junction` · `No fallback`
 
-**User:** 2034 Coogee NSW
+**User:** Coles Bondi Junction
 
-**Assistant:** *(WebFetch × 3 in parallel against Woolworths/Coles/Aldi store finders)*
+**S4** — three questions in one panel:
 
-Nearest stores by chain:
+| Question | Header | Answer |
+|---|---|---|
+| How often should the run fire? | `Cadence` | Weekly |
+| Auto-save new recipes to your library? | `Recipes` | Ask each time |
+| Who gets the shopping brief? | `Notify` | Sam |
 
-**Woolworths**
-- [x] Woolworths Coogee (1.2 km, 32 Arden St)
-- [ ] Woolworths Maroubra Junction (2.8 km)
-- [ ] Woolworths Eastgate Bondi (3.4 km)
+**S5** — "What's the maximum total for a single order?" · `Max spend`
+→ `$100` · `$150` · `$250` · `$400`
 
-**Coles**
-- [ ] Coles Randwick (2.1 km, Royal Randwick Shopping Centre)
-- [ ] Coles Pacific Square Maroubra (3.0 km)
+**User:** $250
 
-**Aldi**
-- [ ] Aldi Maroubra (2.9 km)
+**S6** — "If an item is unavailable, what should happen?" · `Subs`
+→ `Substitute similar` · `Ask me first` · `Skip the item` · `Cancel the run`
 
-Pick a **primary**: *Woolworths Coogee*
-Pick a **fallback**: *Coles Randwick*
-
-### 3. Auto-save recipes
-
-If I research a meal idea online and you cook it, should I save it to your household library?
-
-- [x] **Yes** — persist via `recipes_create` so I'll suggest it again
-- [ ] No — mention it in the brief, don't persist
-
-**User:** Yes
-
-### 4. Auto-order policy
-
-- [ ] Always auto-order (still confirm cart before checkout)
-- [x] **Build cart but pause for explicit go-ahead** — recommended
-- [ ] Never auto-order (produce list + notify only)
-
-**User:** Build cart but pause
-
-### 5. Designated notification target
-
-*(households_list returned: Anna Donovan, Mark Donovan, Eli Donovan (13), Sophie Donovan (10))*
-
-Who reviews the brief each cycle?
-
-- [x] **Anna Donovan** (parent)
-- [ ] Mark Donovan
-- [ ] Eli Donovan
-- [ ] Sophie Donovan
-
-Delivery channel:
-
-- [x] **In-Claude prompt** (default)
-- [x] **Also add to shared list** "Kitchen Concierge notifications"
-
-### 6. Ordering backends + priority
-
-Multi-select, in priority order:
-
-1. [x] **Woolworths** (click-and-collect)
-2. [x] **Coles** (click-and-collect fallback)
-3. [ ] Uber Eats Groceries
-
-Default delivery mode: **Click-and-collect** (cheapest, you collect Sunday morning)
+**User:** Ask me first
 
 ---
 
-**Assistant:**
+**Claude:**
 
-Writing config to `plugins/orbrey-ai/.kitchen-concierge.config.json`…
-
-Registering scheduled task…
-
-```
-mcp__scheduled-tasks__create_scheduled_task
-  cronExpression: 0 18 * * 0
-  prompt: /orbrey-ai:kitchen-concierge run
-  description: Kitchen concierge — Donovan household
-  notifyOnCompletion: true
-```
-
-Confirming with `mcp__scheduled-tasks__list_scheduled_tasks`…
-
-### Setup complete
-
-| Field | Value |
-|---|---|
-| Cadence | Weekly, Sunday 18:00 (next: 24/05/2026 18:00 AEST) |
-| Primary store | Woolworths Coogee — click-and-collect |
-| Fallback store | Coles Randwick |
-| Auto-save recipes | Yes |
-| Auto-order policy | Build + pause for go-ahead |
-| Notification target | Anna Donovan (in-Claude + shared list) |
-| Adapters available | woolworths ✓ · coles ✓ · uber_eats ✓ |
-
-**Before the first scheduled run**, set credentials in your shell:
-
-```
-$env:ORBREY_WOOLWORTHS_USER = "anna@donovan.example"
-$env:ORBREY_WOOLWORTHS_PASS = "<your password>"
-$env:ORBREY_COLES_USER = "anna@donovan.example"
-$env:ORBREY_COLES_PASS = "<your password>"
-```
-
-Save a payment method on each grocer's account beforehand — the adapter selects "saved payment", never enters card details.
-
-To trigger an immediate run: `/orbrey-ai:kitchen-concierge run`
-To see status: `/orbrey-ai:kitchen-concierge status`
+> Config written to `${CLAUDE_PLUGIN_DATA}/config.json`.
+>
+> Scheduled task registered:
+>
+> | | |
+> |---|---|
+> | Cron | `0 18 * * 0` (Sundays 18:00, Australia/Sydney) |
+> | Prompt | `/orbrey-ai:kitchen-concierge run` |
+> | Notify on completion | yes |
+>
+> **One thing before this can order anything.**
+>
+> I checked for `household-dietary-profiles.json` and there isn't one. Ordering
+> will refuse to run until every member has a dietary profile — that's a hard
+> stop, not a warning, because a scheduled run has nobody to ask about allergies
+> and I'd otherwise be buying food blind.
+>
+> Run `/orbrey-ai:household-onboarder` for each member. It takes a couple of
+> minutes each and only needs doing once.
+>
+> Two other things worth knowing:
+>
+> - **Ordering needs Chrome.** Start Claude Code with `claude --chrome` when you
+>   want to place an order. I drive your own logged-in browser — I never handle
+>   your password or a verification code.
+> - **Payment stays with Woolworths.** Make sure your card is saved on your
+>   account. I never see it. If you want a hard financial ceiling on top of the
+>   $250 limit, a Revolut or Wise virtual card with a monthly cap works well as
+>   the card on file.
+>
+> Check anytime with `/orbrey-ai:kitchen-concierge status`.

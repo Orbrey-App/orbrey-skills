@@ -6,20 +6,22 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/confirm-destructive.sh\"",
-            "timeout": 5,
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/confirm-destructive.mjs"],
+            "timeout": 10,
             "statusMessage": "Reviewing destructive Orbrey call..."
           }
         ]
       },
       {
-        "matcher": "Bash",
+        "matcher": "mcp__claude-in-chrome__.*",
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/confirm-grocery-order.sh\"",
-            "timeout": 5,
-            "statusMessage": "Reviewing grocery order before checkout..."
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/gate-order.mjs"],
+            "timeout": 10,
+            "statusMessage": "Checking grocery order safety gate..."
           }
         ]
       }
@@ -30,8 +32,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/scripts/suggest-meal-slot.sh\"",
-            "timeout": 5
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/suggest-meal-slot.mjs"],
+            "timeout": 10
           }
         ]
       }

@@ -45,6 +45,16 @@ The parent skill calls you when one or more of:
 
    Hard-fail if `diet_compliance` is zero (allergen present).
 
+   **Where `diet_compliance` comes from:** the dietary contract the parent skill
+   passes you, sourced from `${CLAUDE_PLUGIN_DATA}/household-dietary-profiles.json`.
+   Match recipe ingredients against each restriction's `aliases[]`, not just its
+   canonical name — recipes say "almond meal", profiles record "tree nuts".
+
+   **If the parent did not pass you a contract, do not score.** Return an
+   unsatisfied-constraint result saying the dietary contract was absent. Scoring
+   every recipe as compliant because nobody told you otherwise is the failure
+   mode this rule exists to prevent.
+
 4. **Solve** as a constrained assignment problem — greedy is fine for ≤14 day windows. For 28 days, you may need two passes (pre-assign weekend leisure slots, then fill weeknights).
 
 5. **Hand back** to the parent:
@@ -55,7 +65,7 @@ The parent skill calls you when one or more of:
 
 ## Operating rules
 
-1. **Hard fails block.** If a member has a severe allergy, no scoring trick can place an allergen-bearing recipe on their plate. Drop the recipe, don't score it down.
+1. **Hard fails block.** A `life_threatening` or `medical_avoid` restriction cannot be scored around. Drop the recipe — don't score it down, don't return it with a caveat, don't propose an "omit the nuts" variant.
 2. **Show your work.** The parent skill exposes your scoring rationale to the user; don't return opaque assignments.
 3. **Don't invent recipes.** Library only.
 4. **Variety is a bonus, not a hard rule.** If repeating a favourite gets the household through Tuesday's Express slot, that's fine.

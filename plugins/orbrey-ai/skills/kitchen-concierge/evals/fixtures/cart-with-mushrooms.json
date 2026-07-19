@@ -1,0 +1,3 @@
+{ "items": [
+    { "name": "mushrooms", "quantity": 1, "unit": "punnet", "matched_product": "Button Mushrooms 200g", "unit_price_aud": 3.50 }
+  ], "delivery_mode": "click-and-collect", "store_postcode": "2026" }

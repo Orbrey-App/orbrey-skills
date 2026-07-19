@@ -8,8 +8,6 @@ effort: high
 
 # Chore Rotator
 
-ultrathink
-
 ## User Context
 
 The user wants a chore rotation:

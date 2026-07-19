@@ -1,192 +1,146 @@
-# Example — End-to-end run transcript
+# Example — `run` and `approve`
 
-A walkthrough of `/orbrey-ai:kitchen-concierge run` fired by the scheduler on Sunday 24/05/2026 at 18:00 AEST for the Donovan household.
+> **Illustrative, not a captured transcript.** Names, stores, products and
+> figures are invented to show the shape of the flow, including the failure
+> paths. Nothing here is a record of a real run.
 
----
-
-**Assistant:** Kitchen Concierge — weekly run for the Donovan household.
-
-### Phase 3.1 · Fetching context
-
-- Household: **Donovan** (default, confirmed)
-- Existing meal plan for 25/05–31/05: empty
-- Dietary prefs loaded: vegetarian Mondays, no shellfish, low-FODMAP for Sophie
-
-### Phase 3.2 · Planning meals
-
-Invoking `orbrey-ai:meal-planner` for a 7-day plan…
-
-| Date | Meal | Recipe | Source | Cook time |
-|---|---|---|---|---|
-| Mon 25/05 | Dinner | Lentil bolognese | Library | 30 min |
-| Tue 26/05 | Dinner | Sheet-pan miso salmon | Library | 25 min |
-| Wed 27/05 | Dinner | Pumpkin & sage risotto | Library | 40 min |
-| Thu 28/05 | Dinner | Quick chicken stir-fry | Library | 20 min |
-| Fri 29/05 | Dinner | Friday pizza night | Library | 35 min |
-| Sat 30/05 | Dinner | Roast lamb + veg | Library | 90 min |
-| Sun 31/05 | Dinner | Leftovers buffet | — | 0 min |
-
-Notes: Thursday 28/05 is Eli's footy practice (calendar conflict) — picked the 20-min stir-fry. Saturday's roast is the only high-effort meal.
-
-### Phase 3.3 · Pantry diff
-
-`pantry_list` shows 47 items. After matching against the new recipes:
-- 12 ingredients fully covered by pantry
-- 23 ingredients need topping up
-- 4 ingredients expiring within 3 days — all used in this week's meals (no waste)
-
-### Phase 3.4 · Shopping list
-
-Adding 23 items via `grocery_add_item`, then invoking `orbrey-ai:grocery-organizer` to dedupe and aisle-order…
-
-Final list: **31 items** (8 pre-existing + 23 new, no duplicates after merge)
-
-### Phase 3.5 · Notification
-
-```markdown
-## Kitchen Concierge — 24/05/2026
-
-**Household:** Donovan
-**Period:** Week of 25/05 – 31/05
-**Designated reviewer:** Anna
-
-### Meals planned
-[table above]
-
-### Pantry status
-- 4 items expiring within 3 days — all used this week (no waste)
-- 6 items consumed since last run
-- 3 items below low-stock threshold and added to the list
-
-### Shopping list (31 items · est. $187.40 AUD)
-
-**Produce**
-- Tomatoes × 1 kg
-- Pumpkin (butternut) × 1 each
-- Basil × 1 bunch
-- Lemons × 4 each
-- Mixed salad × 2 pack
-…
-
-**Pantry / dry**
-- Arborio rice × 1 kg
-…
-
-**Chilled**
-- Salmon fillets × 4 each
-- Greek yoghurt × 500 g
-…
-
-**Frozen**
-- Pizza bases × 2 pack
-…
-
-### Suggested store
-**Primary:** Woolworths Coogee via click-and-collect
-**Fallback:** Coles Randwick
-**Earliest slot:** Mon 25/05 09:00 – 10:00
-
-### Awaiting your go-ahead
-Reply with: `go` · `edit` · `skip` · `store: <name>`
-```
-
-*(Also written to the "Kitchen Concierge notifications" shared list per config.)*
-
-**Anna:** go
-
-### Phase 3.6 · Ordering — Woolworths Coogee, click-and-collect
-
-Dry-run:
-
-```
-python scripts/order_groceries.py woolworths /tmp/run-2026-05-24/cart.json --mode click-and-collect --dry-run
-```
-
-```
-[woolworths] Logged in as anna@donovan.example
-[woolworths] Fulfilment location: Woolworths Coogee (id: 1408)
-[woolworths] Searching 31 items…
-  ✓  Tomatoes (1 kg loose)              $5.90
-  ✓  Butternut pumpkin (~1.2 kg each)   $6.78
-  ✓  Basil bunch                         $3.50
-  …
-  ⚠  Pizza bases — substituted: "Coles Pizza Bases" → "Woolworths Stone-Baked Pizza Bases" (within tolerance)
-  ✗  Sumac — not stocked
-  ✓  …
-
-Summary:
-  29 items added · 1 substituted · 1 missing
-  Subtotal:        $171.40
-  Delivery fee:    $0.00 (click-and-collect)
-  Total:           $171.40
-  Earliest slot:   Mon 25/05 09:00–10:00
-  Substitution rate: 6.5% (under 20% threshold ✓)
-```
-
-Showing dry-run summary…
-
-**Final confirmation** — proceed to checkout?
-- [x] **Yes, place order**
-- [ ] Edit cart first
-- [ ] Cancel
-
-**Anna:** Yes, place order
-
-*(PreToolUse hook fires — confirms total of $171.40)*
-
-```
-python scripts/order_groceries.py woolworths /tmp/run-2026-05-24/cart.json --mode click-and-collect
-```
-
-```
-[woolworths] Cart restored: 29 items, $171.40
-[woolworths] Pickup window selected: Mon 25/05 09:00–10:00
-[woolworths] Payment method: Visa ending 4421 (saved)
-[woolworths] Placing order…
-[woolworths] Order placed. Reference: WOW-AU-2026052400087412
-[woolworths] Confirmation email sent to anna@donovan.example
-```
-
-### Phase 3.7 · Log
-
-Wrote `.kitchen-concierge/runs/2026-05-24T18-22-04.md`
-
-```
-### Run complete — 2026-05-24T18:22:04+10:00
-
-- Outcome: **Placed**
-- Order reference: WOW-AU-2026052400087412
-- Total: $171.40 AUD
-- Pickup: 25/05 09:00–10:00 at Woolworths Coogee
-- Adapter: woolworths
-- Log: `.kitchen-concierge/runs/2026-05-24T18-22-04.md`
-
-Next scheduled run: Sun 31/05/2026 18:00 AEST
-```
-
-The sumac that wasn't stocked is now in your "Items to source elsewhere" shared list — try the Friday spice run.
+This shows the two-part shape that matters most in 0.3.0: a **scheduled run
+defers** (nobody is present to approve a purchase), and a later **interactive
+`approve` builds the cart and checks out**.
 
 ---
 
-## Variant — failure path
+## Part 1 — the scheduled run (Sunday 18:00, nobody at the keyboard)
 
-If the Woolworths adapter had failed at login:
+**Claude:**
 
-```
-[woolworths] Exit code 10 — credentials invalid
-Falling back to coles…
-[coles] Logged in as anna@donovan.example
-[coles] Searching 31 items…
-…
-```
+> **Kitchen Concierge — weekly run, Donovan household**
+>
+> *3.0* Scheduled run detected. No interactive session — I'll prepare everything
+> and stop before ordering.
+>
+> *3.1* Household confirmed. **Dietary profile: 4/4 members, last confirmed
+> 05/05/2026.**
+>
+> | Member | Restriction | Tier |
+> |---|---|---|
+> | Eli | tree nuts *(almond, cashew, walnut, pistachio…)* | **life_threatening** |
+> | Sophie | high-FODMAP (onion, garlic) | medical_avoid |
+> | Household | no pork | ethical_religious |
+>
+> *3.2* Planning 7 days via `meal-planner`, passing the contract above… 7 dinners
+> planned. Two candidate recipes dropped — a satay and a pesto — both carry tree
+> nuts. Replaced, not flagged as caveats.
+>
+> *3.3* Pantry list read (37 items). 14 ingredients already on hand.
+>
+> *3.4* 23 items added to the grocery list, deduped and aisle-ordered.
+>
+> *3.5* Brief sent to Sam.
+>
+> ---
+>
+> **Nothing has been ordered and nothing has been charged.**
+>
+> This run was scheduled, so it stops here — placing an order needs you present
+> to approve the spend. Estimated basket **$164 AUD** at Woolworths Bondi
+> (your ceiling is $250).
+>
+> Run `/orbrey-ai:kitchen-concierge approve` when you're next at the keyboard.
+>
+> Logged: `deferred-awaiting-approval`
 
-If the fallback also failed, the brief is updated:
+---
 
-```
-### Run incomplete — both adapters failed
-- woolworths: exit 10 (credential error)
-- coles: exit 20 (TFA challenge)
+## Part 2 — `approve` (Monday morning, `claude --chrome`)
 
-Action required: complete Coles TFA at https://www.coles.com.au/account.
-Re-run: `/orbrey-ai:kitchen-concierge run --resume`
-```
+**User:** `/orbrey-ai:kitchen-concierge approve`
+
+**Claude:**
+
+> *0.5* Chrome tools available. ✓
+>
+> Resuming the run deferred 24/05/2026 18:00 — 23 items, estimated $164.
+>
+> Rebuilding the cart in the browser now. Prices and stock have moved since
+> last night, so I'm re-pricing rather than trusting the stored figures.
+>
+> *(navigates to Woolworths in your logged-in Chrome, sets fulfilment to Bondi,
+> adds items)*
+>
+> Two things to flag:
+>
+> - **Sourdough loaf** — out of stock. Your policy is "Ask me first", so I've
+>   left it out rather than swapping.
+> - **Free-range eggs 12pk** — $8.50, above the $7.00 cap you set on eggs.
+>
+> Review-page total: **$171.40** including a $5.00 delivery fee.
+>
+> *(runs `verify_cart.mjs --cart … --total 171.40`)*
+>
+> ```
+> --- CART VERIFIED ---
+> Items:        22
+> Total:        $171.40 AUD (ceiling $250.00)
+> Allergens:    checked against 3 restriction(s) across 4 member(s)
+> Cart hash:    5650dd2afd4b134f
+> ```
+
+**R3** — "1 item exceeds your per-item price cap." · `Over cap`
+→ `Skip it` · `Buy anyway` · `Show me` · `Cancel the order`
+
+**User:** Buy anyway
+
+**R2** — "22 items, $171.40 incl. delivery. 1 unavailable. Order?" · `Order`
+→ `Order now` · `Edit the list` · `Try Coles instead` · `Skip this run`
+
+**User:** Order now
+
+**Claude:** *(clicks through checkout — the PreToolUse gate fires)*
+
+> ```
+> About to place a REAL grocery order.
+>
+>   Total:  $171.40 AUD (your ceiling: $250.00)
+>   Items:  22
+>   Store:  Woolworths Bondi
+>   Mode:   click-and-collect
+>
+> Cart verified 1 min ago against 4 household dietary profile(s).
+> Approving this charges your saved payment method.
+> ```
+>
+> *(user approves the permission prompt)*
+>
+> ### Run complete — 2026-05-25T09:14:22+10:00
+>
+> - Outcome: **Placed**
+> - Dietary profile: 4/4 members resolved
+> - Cart verified: Yes — hash `5650dd2afd4b134f`, total $171.40
+> - Order reference: `WW-4471902`
+> - Collection: 25/05 16:00–17:00, Woolworths Bondi
+> - Log: `${CLAUDE_PLUGIN_DATA}/runs/2026-05-25T09-14-22Z.md`
+>
+> Next scheduled run: Sunday 31/05/2026 18:00.
+
+---
+
+## What a blocked run looks like
+
+If the dietary profile had been missing, Part 1 would have stopped at 3.1:
+
+> *3.1* **Aborting this run.**
+>
+> I can't read `household-dietary-profiles.json`, and I won't plan or buy food
+> for this household without it. Eli's tree-nut allergy is recorded as
+> life-threatening, so proceeding on a guess isn't something I'll do — even
+> though the plan itself would probably have been fine.
+>
+> Run `/orbrey-ai:household-onboarder` to restore it, then `run` again.
+>
+> Logged: partial run, `precondition-failed`.
+
+And if the basket had come to $268 against a $250 ceiling, `verify_cart.mjs`
+would exit 40 and the run would stop there — the gate would not have offered a
+checkout prompt at all. Splitting the order to slip under the ceiling is
+explicitly not a workaround.

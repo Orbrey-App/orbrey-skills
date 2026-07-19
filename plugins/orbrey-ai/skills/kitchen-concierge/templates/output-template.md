@@ -1,6 +1,6 @@
 # Notification Brief Template
 
-The brief delivered to the designated household member at Phase 3.5. Sent either as an in-Claude markdown render or as a shared-list entry (split into multiple list items if length is the constraint).
+The brief delivered to the designated household member at Phase 3.5 — either rendered in-session or written as a shared-list entry.
 
 ---
 
@@ -9,7 +9,21 @@ The brief delivered to the designated household member at Phase 3.5. Sent either
 
 **Household:** {{HOUSEHOLD_NAME}}
 **Period:** {{PERIOD_LABEL}} ({{START_DATE}} – {{END_DATE}})
-**Designated reviewer:** {{MEMBER_NAME}}
+**Reviewer:** {{MEMBER_NAME}}
+
+---
+
+### Dietary contract in force
+
+Restate this at the top of every brief. If a plan was constrained, the person
+approving it needs to see what it was constrained by.
+
+| Member | Restriction | Tier |
+|---|---|---|
+| {{NAME}} | {{ingredient}} | **{{life_threatening}}** |
+| {{NAME}} | {{ingredient}} | {{medical_avoid}} |
+
+Profile last confirmed {{DD/MM/YYYY}} · {{N}}/{{N}} members covered
 
 ---
 
@@ -17,8 +31,7 @@ The brief delivered to the designated household member at Phase 3.5. Sent either
 
 | Date | Meal | Recipe | Source | Cook time |
 |---|---|---|---|---|
-| {{DD/MM}} | {{Breakfast|Lunch|Dinner}} | {{recipe name}} | {{Library | Suggested new}} | {{min}} |
-| … | … | … | … | … |
+| {{DD/MM}} | {{Dinner}} | {{recipe name}} | {{Library｜Suggested new}} | {{min}} |
 
 {{PLANNING_NOTES}}  <!-- e.g. "Tuesday is busy — 20-min stir-fry chosen." -->
 
@@ -27,8 +40,8 @@ The brief delivered to the designated household member at Phase 3.5. Sent either
 ### Pantry status
 
 - {{N}} items expiring within 7 days — used in {{M}} of the new meals
-- {{N}} items consumed since last run — logged via `pantry_consume`
-- {{N}} items below low-stock threshold and added to the shopping list
+- {{N}} items below low stock and added to the shopping list
+- Pantry list last updated {{DD/MM/YYYY}}{{" — STALE, consider a refresh" if >30 days}}
 
 ---
 
@@ -37,64 +50,66 @@ The brief delivered to the designated household member at Phase 3.5. Sent either
 **Produce**
 - {{item}} × {{qty}} {{unit}}
 
-**Pantry / dry**
+**Pantry / dry** · **Chilled** · **Frozen**
 - …
 
-**Chilled**
-- …
-
-**Frozen**
-- …
+> Estimated total. The figure that gets checked against your ${{MAX_TOTAL}} ceiling
+> is the retailer's own review-page total, read at order time.
 
 ---
 
-### Suggested store
+### Store
 
-**Primary:** {{STORE_NAME}} ({{STORE_SUBURB}}) via {{click-and-collect|delivery}}
-**Fallback:** {{STORE_NAME_2}} (used automatically if primary fails)
-**Earliest available slot:** {{DD/MM HH:MM}} – {{HH:MM}}
+**Primary:** {{STORE_NAME}} ({{STORE_SUBURB}}) via {{click-and-collect｜delivery}}
+**Fallback:** {{STORE_NAME_2}} — offered as an explicit choice if the primary is
+short more than 20% of the cart, never switched to silently
+**Earliest slot:** {{DD/MM HH:MM}} – {{HH:MM}}
 
 ---
 
-### Awaiting your go-ahead
+### Next step
 
-Reply with one of:
-
-- **`go`** — order the cart as listed
-- **`edit`** — let me adjust the list first
-- **`skip`** — defer this run; I'll try again next cycle
-- **`store: <name>`** — force a specific store
-
-This brief is auto-generated. The full plan is in your meal-plan view; the full list is in the grocery view.
+{{#if interactive}}
+I'll ask you to confirm before anything is ordered.
+{{else}}
+This run was scheduled, so it stops here. Nothing has been ordered and nothing
+has been charged. Run `/orbrey-ai:kitchen-concierge approve` when you're next at
+the keyboard and I'll build the cart and check out with you.
+{{/if}}
 ```
+
+> **Reply options must match the AskUserQuestion panel exactly.** The tool takes
+> 2–4 fixed options and has no free-text field, so do not offer a
+> `store: <name>` style reply the tool cannot capture. Phase 3.6's R2 panel is
+> the canonical wording: `Order now` · `Edit the list` · `Try Coles instead` ·
+> `Skip this run`.
 
 ---
 
 ## Variant: shared-list entry (compact)
 
-When delivered via `lists_add_item`, collapse to a single entry of the form:
+Delivered via `lists_add_item`:
 
 ```
-[Kitchen Concierge {{DD/MM}}] {{N_ITEMS}} items · ${{TOTAL_AUD}} · {{STORE_NAME}} {{click-and-collect|delivery}} · reply "go"/"edit"/"skip"
+[Kitchen Concierge {{DD/MM}}] {{N_ITEMS}} items · est. ${{TOTAL_AUD}} · {{STORE_NAME}} {{mode}} · run `approve` to order
 ```
 
-Add a second list item with the meal plan summary if the channel supports it.
+Add a second item with the meal-plan summary if the channel allows.
 
 ---
 
-## Final outcome card (Phase 3.7 render)
-
-After the order completes (or is cancelled / deferred), append this card to the conversation:
+## Final outcome card (Phase 3.7)
 
 ```markdown
 ### Run complete — {{ISO8601}}
 
-- Outcome: **{{Placed | Deferred | Cancelled | Failed}}**
-- Order reference: {{REF_NUMBER or "—"}}
-- Total: ${{TOTAL_AUD}} AUD
+- Outcome: **{{Placed｜Deferred｜Cancelled｜Failed}}**
+- Dietary profile: {{N}}/{{N}} members resolved
+- Cart verified: {{Yes — hash {{HASH}}, total ${{TOTAL}}｜No — exit {{CODE}}: {{REASON}}}}
+- Order reference: {{REF_NUMBER｜"—"}}
+- Total: ${{TOTAL_AUD}} AUD (ceiling ${{MAX_TOTAL_AUD}})
 - Pickup/delivery: {{DD/MM HH:MM}}
-- Adapter: {{ADAPTER_NAME}}
-- Log: `.kitchen-concierge/runs/{{ISO8601}}.md`
+- Log: `${CLAUDE_PLUGIN_DATA}/runs/{{ISO8601}}.md`
 
 Next scheduled run: {{NEXT_FIRE_DATETIME}}
 ```

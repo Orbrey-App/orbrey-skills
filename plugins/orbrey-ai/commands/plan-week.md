@@ -15,7 +15,7 @@ You are running the `meal-planner` skill with sensible defaults so the user gets
 - **Meals per day:** dinner only
 - **Effort budget:** Low–Medium with one Saturday Leisure slot reserved for higher-effort
 - **Diners:** read from the household via `rewards.wallets` (count of members)
-- **Dietary constraints:** read from each member's profile (allergies, vegetarian flags)
+- **Dietary constraints:** read from `${CLAUDE_PLUGIN_DATA}/household-dietary-profiles.json` (written by `/orbrey-ai:household-onboarder`). If that file is absent, ask before planning — do not assume the household has no restrictions
 - **Grocery sync:** yes — auto-add missing items to the meal-plan list (still ask for confirmation before mutation)
 
 ## Workflow

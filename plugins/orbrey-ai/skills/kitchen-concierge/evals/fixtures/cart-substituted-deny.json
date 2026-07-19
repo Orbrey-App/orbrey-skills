@@ -1,0 +1,4 @@
+{ "items": [
+    { "name": "sourdough loaf", "quantity": 1, "unit": "loaf", "matched_product": "White Sandwich Loaf", "unit_price_aud": 3.00,
+      "substituted": true, "substitution_note": "Sourdough unavailable", "substitution": "deny" }
+  ], "delivery_mode": "click-and-collect", "store_postcode": "2026" }

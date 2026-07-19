@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://orbrey.app/schemas/kitchen-concierge/cart.json",
   "title": "Kitchen Concierge Cart",
-  "description": "Input payload for scripts/order_groceries.py. One cart per adapter invocation.",
+  "description": "The cart the skill builds in the browser, written to ${CLAUDE_PLUGIN_DATA}/pending-cart.json and read by scripts/verify_cart.mjs. Line items carry BOTH what was requested and what was actually matched in the store — the allergen check needs the matched product title, because a retailer's 'Almond Meal 500g' is what reaches the table, not the requested 'flour'.",
   "type": "object",
   "required": ["items", "delivery_mode", "store_postcode"],
   "additionalProperties": false,
@@ -18,36 +18,49 @@
           "name": {
             "type": "string",
             "minLength": 2,
-            "description": "Plain-language item name (e.g. 'tomatoes', 'extra virgin olive oil')."
+            "description": "What was requested, in plain language (e.g. 'tomatoes')."
           },
-          "quantity": {
-            "type": "number",
-            "exclusiveMinimum": 0,
-            "description": "Numeric quantity in the chosen unit."
-          },
+          "quantity": { "type": "number", "exclusiveMinimum": 0 },
           "unit": {
             "type": "string",
-            "enum": ["each", "g", "kg", "ml", "L", "pack", "bunch", "dozen", "loaf", "punnet"],
-            "description": "Unit of measure."
+            "enum": ["each", "g", "kg", "ml", "L", "pack", "bunch", "dozen", "loaf", "punnet"]
+          },
+          "matched_product": {
+            "type": ["string", "null"],
+            "description": "The product title as shown by the retailer. REQUIRED for allergen checking once the item is in the trolley — verify_cart.mjs matches restrictions against this, not against `name`."
+          },
+          "unit_price_aud": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "description": "Price the retailer showed. Compared against max_price_aud."
           },
           "max_price_aud": {
             "type": ["number", "null"],
             "minimum": 0,
-            "description": "Skip the item (or substitute) if unit price exceeds this. Optional."
+            "description": "Per-item ceiling. Exceeding it triggers exit 30 and question R3."
           },
-          "notes": {
+          "substituted": {
+            "type": "boolean",
+            "default": false,
+            "description": "True when the retailer supplied something other than the exact match. Any true value is rejected outright when the household carries a life_threatening or medical_avoid restriction."
+          },
+          "substitution_note": {
             "type": ["string", "null"],
-            "description": "Free-text hint for the adapter's search (e.g. 'organic', '500g pack', 'no brand X')."
+            "description": "What was swapped in. Scanned for allergens alongside matched_product — substitutions are where allergens sneak in."
           },
           "substitution": {
             "type": "string",
             "enum": ["allow", "ask", "deny"],
             "default": "allow",
-            "description": "How the adapter handles out-of-stock items."
+            "description": "Per-item policy. `deny` plus `substituted: true` is exit 50."
+          },
+          "notes": {
+            "type": ["string", "null"],
+            "description": "Search hint (e.g. 'organic', '500g pack')."
           },
           "recipe_source": {
             "type": ["string", "null"],
-            "description": "Recipe name this ingredient came from. Used only for the log; ignored by the adapter."
+            "description": "Recipe this ingredient came from. Log only."
           }
         }
       }
@@ -58,28 +71,20 @@
     },
     "store_postcode": {
       "type": "string",
-      "pattern": "^[0-9]{4,5}$",
-      "description": "4-digit AU postcode or 5-digit US ZIP."
+      "pattern": "^[0-9]{4}$",
+      "description": "4-digit AU postcode."
     },
     "store_id": {
       "type": ["string", "null"],
-      "description": "Adapter-specific store identifier (Woolworths uses fulfilment-location IDs; Coles uses store codes). Optional — adapter falls back to nearest if absent."
+      "description": "Retailer's own store / fulfilment-location identifier."
     },
     "delivery_window": {
       "type": ["object", "null"],
       "additionalProperties": false,
-      "description": "Preferred delivery / pickup window. Adapter picks the nearest available slot if absent.",
       "properties": {
         "earliest_iso": { "type": "string", "format": "date-time" },
         "latest_iso": { "type": "string", "format": "date-time" }
       }
-    },
-    "substitution_tolerance": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 1,
-      "default": 0.2,
-      "description": "Fraction of cart items allowed to be substituted/missing before adapter exits with code 30."
     }
   }
 }

@@ -1,0 +1,6 @@
+{ "schema_version": 1, "household_id": "fixture-household", "updated_at": "REPLACED_AT_RUNTIME", "source": "manual",
+  "members": [ { "member_id": "m1", "display_name": "Eli", "age": 13, "dietary_pattern": "omnivore",
+    "restrictions": [ { "ingredient": "tree nuts",
+      "aliases": ["almond","cashew","walnut","pistachio","hazelnut","macadamia","pecan"],
+      "tier": "life_threatening", "kind": "allergy", "cross_contamination_risk": true,
+      "confirmed_by": "fixture", "confirmed_on": "2026-05-05" } ] } ] }

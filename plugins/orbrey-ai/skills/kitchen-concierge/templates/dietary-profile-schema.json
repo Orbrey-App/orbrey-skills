@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbrey.app/schemas/kitchen-concierge/dietary-profile.json",
+  "title": "Household Dietary Profiles",
+  "description": "Per-member food restrictions for the household. Written by orbrey-ai:household-onboarder to ${CLAUDE_PLUGIN_DATA}/household-dietary-profiles.json. Read fail-closed by kitchen-concierge (scripts/verify_cart.mjs) and meal-planner. Interim store until members.list / members.set_dietary_profile land on the orbrey worker.",
+  "type": "object",
+  "required": ["schema_version", "household_id", "updated_at", "members"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": 1 },
+    "household_id": {
+      "type": "string",
+      "description": "Orbrey household UUID this profile set belongs to."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last confirmation. Profiles older than 90 days abort an ordering run when any member carries a life_threatening or medical_avoid restriction."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["household-onboarder", "manual", "mcp"],
+      "default": "household-onboarder"
+    },
+    "members": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["display_name", "restrictions"],
+        "additionalProperties": false,
+        "properties": {
+          "member_id": {
+            "type": ["string", "null"],
+            "description": "Orbrey member UUID where known (rewards.wallets is the de-facto roster). Null for members with no Orbrey account."
+          },
+          "display_name": { "type": "string", "minLength": 1 },
+          "age": { "type": ["integer", "null"], "minimum": 0 },
+          "dietary_pattern": {
+            "type": "string",
+            "enum": ["omnivore", "vegetarian", "vegan", "pescatarian", "halal", "kosher"],
+            "default": "omnivore"
+          },
+          "restrictions": {
+            "type": "array",
+            "description": "May be empty for a member with no restrictions — but the member must still be listed, so a missing member is distinguishable from an unrestricted one.",
+            "items": {
+              "type": "object",
+              "required": ["ingredient", "tier", "kind"],
+              "additionalProperties": false,
+              "properties": {
+                "ingredient": {
+                  "type": "string",
+                  "minLength": 2,
+                  "description": "Canonical name of the thing to avoid."
+                },
+                "aliases": {
+                  "type": "array",
+                  "items": { "type": "string", "minLength": 3 },
+                  "description": "REQUIRED IN PRACTICE for allergies. Retailer product titles say 'almond meal', never 'tree nuts'. Matching on the canonical name alone misses the actual product on the shelf. List every derivative and trade name you can think of."
+                },
+                "tier": {
+                  "type": "string",
+                  "enum": ["life_threatening", "medical_avoid", "ethical_religious", "dislike"],
+                  "description": "Drives which code path handles it — these must not be collapsed. life_threatening: anaphylaxis risk; drop the recipe entirely, block the product, NO substitutions, abort the run if profile data is missing or stale. medical_avoid: intolerance or medical diet (coeliac, low-FODMAP); same fail-closed posture, substitution only under human review. ethical_religious: hard filter on planning and ordering, but missing data warns rather than aborts. dislike: scoring penalty only; never blocks a purchase."
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": ["allergy", "intolerance", "medical", "religious", "ethical", "preference"]
+                },
+                "cross_contamination_risk": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "When true, 'may contain traces' labelling is disqualifying, not advisory."
+                },
+                "notes": { "type": ["string", "null"] },
+                "confirmed_by": {
+                  "type": ["string", "null"],
+                  "description": "Who last confirmed this restriction. An allergy record with no attribution is a rumour."
+                },
+                "confirmed_on": { "type": ["string", "null"], "format": "date" }
+              }
+            }
+          },
+          "cultural_patterns": {
+            "type": "array",
+            "description": "Day-scoped or recurring meal rules that are not ingredient restrictions.",
+            "items": {
+              "type": "object",
+              "required": ["rule", "tier"],
+              "additionalProperties": false,
+              "properties": {
+                "rule": { "type": "string", "description": "e.g. 'fish on Fridays'" },
+                "byday": {
+                  "type": "array",
+                  "items": { "type": "string", "enum": ["MO", "TU", "WE", "TH", "FR", "SA", "SU"] }
+                },
+                "tier": {
+                  "type": "string",
+                  "enum": ["ethical_religious", "dislike"]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

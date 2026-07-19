@@ -2,13 +2,16 @@
 name: meal-planner
 description: Build a 7/14/28-day meal plan from the household recipe library, respecting dietary tags, household size, calendar busy-nights, and pantry stock. Auto-syncs missing ingredients into the grocery list.
 argument-hint: [duration-and-constraints]
-allowed-tools: Read Write Edit
+allowed-tools: >
+  Read Write Edit AskUserQuestion
+  mcp__orbrey__households_list
+  mcp__orbrey__recipes_list mcp__orbrey__calendar_list
+  mcp__orbrey__grocery_list mcp__orbrey__grocery_add_item
+  mcp__orbrey__lists_list mcp__orbrey__lists_create mcp__orbrey__lists_add_item
 effort: high
 ---
 
 # Meal Planner
-
-ultrathink
 
 ## User Context
 
@@ -43,7 +46,7 @@ Required input before generating a plan:
 2. **Start date** — defaults to next Monday (DD/MM/YYYY).
 3. **Meals per day** — typically dinner only, but ask if they want breakfasts/lunches.
 4. **Household size today** — adults + kids; flag if any members are away (e.g. school camp).
-5. **Dietary constraints** — allergies, vegetarian/vegan/halal/kosher days, repeat tolerance.
+5. **Dietary constraints** — see Phase 2 step 0. **Read the stored profile first**; this question confirms what is on file, it is not the primary source.
 6. **Effort budget** — *low-effort* (≤30 min, ≤6 ingredients), *medium* (≤60 min), *high* (no cap).
 7. **Leftovers strategy** — explicit leftover nights, double-batch nights, or "no leftovers".
 
@@ -53,7 +56,31 @@ If the user gave arguments, infer what you can and ask only for the missing piec
 
 ## Phase 2: Pull Live Data (MCP)
 
-Before drafting anything, call:
+Before drafting anything:
+
+**0. Read the dietary profile.** `${CLAUDE_PLUGIN_DATA}/household-dietary-profiles.json`
+(shape: `${CLAUDE_PLUGIN_ROOT}/skills/kitchen-concierge/templates/dietary-profile-schema.json`).
+
+This is the source of truth for allergies and restrictions — not the user's
+recollection mid-conversation, and not your own inference. If `kitchen-concierge`
+invoked you, it passes the contract in `$ARGUMENTS`; use that and skip the read.
+
+Apply by tier, and do **not** collapse these into one rule:
+
+| Tier | Behaviour |
+|---|---|
+| `life_threatening` | **Drop the recipe entirely.** Never score it down, never suggest it with a caveat, never propose an "omit the nuts" variant |
+| `medical_avoid` | Drop for that member's meals; flag if the household eats as one |
+| `ethical_religious` | Hard filter, scoped to the member and/or the day |
+| `dislike` | Scoring penalty only |
+
+Match on `aliases[]`, not just the ingredient name — "almond meal" is what
+appears in a recipe, "tree nuts" is what is recorded.
+
+If the file is missing and any member's constraints are unknown, say so plainly
+and ask before planning. Do not quietly plan as though nobody has restrictions.
+
+Then call:
 
 1. **`orbrey:recipes.list`** with `household_id` (use `default_household_id` from plugin config if available; otherwise ask). Limit 200.
 2. **`orbrey:calendar.list`** for the plan window — use `start_date` and `end_date` derived from Phase 1.
@@ -137,7 +164,7 @@ End with:
 1. **Never invent recipes** the household hasn't logged. Pull from `recipes.list` only.
 2. **Never auto-mutate** the grocery list without explicit user confirmation. Show the delta first.
 3. **Always honour calendar busy-nights** — a 60-minute recipe on a soccer-training night is a planning failure.
-4. **Surface the dietary contract** at the top of every plan. If the user said "no pork on Fridays", the top of the plan must restate that.
+4. **Surface the dietary contract** at the top of every plan — every member, every restriction, its tier, and when the profile was last confirmed. Whoever cooks from this plan needs to see what it was constrained by.
 5. **Mark thin evidence** — if a recipe has no `prep_time` set, label it `[time unknown]` rather than guessing.
 6. **One pass, then iterate.** Generate the full plan end-to-end first. Don't pause after each day asking for permission.
 7. **Australian English.** Recipes use Australian metric (grams, ml, °C). Don't convert recipes to US units.

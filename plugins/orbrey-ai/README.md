@@ -1,6 +1,12 @@
 # Orbrey Plugin
 
-Run your household from inside Claude Code. Ten domain skills, three agents, and six slash commands wrap the [Orbrey](https://orbrey.app) MCP server so Claude can plan meals, organise the grocery list, rotate chores fairly, build family routines, find calendar conflicts, and manage rewards — all backed by live household data.
+Run your household from inside Claude Code. Twelve domain skills, three agents, and six slash commands wrap the [Orbrey](https://orbrey.app) MCP server so Claude can plan meals, organise the grocery list, rotate chores fairly, build family routines, find calendar conflicts, manage rewards, and — with `kitchen-concierge` — order the groceries.
+
+> ### ⚠️ `kitchen-concierge` spends real money
+>
+> It drives your own Chrome session to build a grocery order at a real retailer
+> and charges the card saved on your retailer account. Read
+> [Grocery ordering](#grocery-ordering-kitchen-concierge) before enabling it.
 
 This plugin assumes you already have an Orbrey household. Authentication is handled by Claude Code's built-in OAuth flow against the orbrey-mcp Cloudflare Worker — you do not need to generate or paste a bearer token.
 
@@ -20,6 +26,8 @@ This plugin assumes you already have an Orbrey household. Authentication is hand
 | 8 | `pantry-to-recipe` | Suggest recipes that minimise new grocery purchases by leaning on what's already in the pantry. |
 | 9 | `household-onboarder` | Walk a new member through joining: profile, role, dietary prefs, calendar OAuth, allowance setup. |
 | 10 | `recurring-task-author` | Translate natural-language schedules ("every other Tuesday except school holidays") into RRule patterns and create the task occurrences. |
+| 11 | `kitchen-concierge` | **Spends money.** Scheduled end-to-end food cycle: plan → pantry diff → shopping list → notify → order at Woolworths/Coles via your own Chrome session. |
+| 12 | `live-artifact-builder` | Build interactive HTML artifacts from household data. |
 
 ---
 
@@ -38,6 +46,7 @@ This plugin assumes you already have an Orbrey household. Authentication is hand
 | Command | What it does |
 |---|---|
 | `/plan-week` | Run `meal-planner` for the next 7 days with sensible defaults. |
+| `/orbrey-ai:kitchen-concierge` | `setup` · `run` · `approve` · `status` — the scheduled food cycle. |
 | `/grocery-tidy` | Run `grocery-organizer` against the current list. |
 | `/chore-fairness` | Show chore distribution by member and suggest rebalance moves. |
 | `/family-digest` | Trigger the `household-curator` digest on demand. |
@@ -129,12 +138,64 @@ For the authoritative tool list, see [`workers/orbrey-mcp/src/mcp/toolRegistry.t
 
 ## Hooks
 
-The plugin ships two safety/UX hooks:
+Three hooks, all Node (`hooks/*.mjs`). They were bash + `jq` before 0.3.0, which
+meant they silently did nothing on Windows, where `jq` is not installed.
 
-- **`confirm-destructive`** — PreToolUse hook on `*_delete*` and `grocery.merge` calls. Surfaces what's about to be removed before execution.
-- **`suggest-meal-slot`** — PostToolUse hook after `recipes.create`. Suggests slotting the new recipe into the next open meal-plan day.
+| Hook | Event | Posture |
+|---|---|---|
+| `confirm-destructive` | PreToolUse on `*delete*` / `*merge*` / `*adjust*` | **Advisory** — describes what's about to be removed |
+| `suggest-meal-slot` | PostToolUse on `recipes_create` | Advisory nudge |
+| `gate-order` | PreToolUse on `mcp__claude-in-chrome__*` | **Blocking, fail-closed** — the grocery spend gate |
 
-Hooks are pure bash and live under `hooks/scripts/`.
+`gate-order` is the only one that can stop a call. It denies checkout until
+`verify_cart.mjs` has passed, and then returns `ask` — never `allow` — so the
+final spend always reaches a real permission prompt. Run `/reload-plugins` after
+editing anything under `hooks/`; only `SKILL.md` files hot-reload.
+
+---
+
+## Grocery ordering (`kitchen-concierge`)
+
+This is the one skill that spends money. What it does and does not do:
+
+**How it reaches the store.** Through **your own Chrome**, via Claude in Chrome
+(`claude --chrome`). It does not launch a headless browser, does not store your
+retailer password, and **never logs in or handles a verification code** — if it
+lands on a login, OTP or CAPTCHA screen it stops and hands control back. Your
+bank and Woolworths both tell you never to share a one-time code; a tool that
+asks for one is teaching you to be defrauded.
+
+**How it pays.** It doesn't. Payment is the card saved on your retailer account,
+held by the retailer under their PCI compliance. This plugin never sees, stores
+or types a card number. **Never put card details in a config file** — PCI DSS
+3.3.1 prohibits storing CVV outright, and card digits read into an AI agent's
+context flow into transcripts and logs. If you want a hard financial ceiling,
+make the card on file a Revolut or Wise virtual card with a monthly cap (both
+available to an Australian individual, no ABN needed).
+
+**What stops a mistake.** Three independent layers:
+1. `verify_cart.mjs` asserts your per-order spend ceiling, per-item price caps
+   and the household allergen list — in code, before checkout is reachable.
+2. `gate-order` denies checkout unless that verification passed, is under 15
+   minutes old, and matches the exact cart that was verified.
+3. That gate returns `ask`, so you approve the real total at a real prompt.
+
+Scheduled runs **never buy**. They plan, build the list, notify you, and stop.
+
+**Allergies are a hard precondition.** Ordering refuses to run without a current
+dietary profile covering every member (`/orbrey-ai:household-onboarder` writes
+it). A scheduled run has nobody to ask, so it fails closed rather than guessing.
+
+**Terms of service — read this.** Woolworths' site terms prohibit using "any
+robot, spider... or other mechanism to retrieve or index any portion of the
+Site". Driving your own authenticated browser with you approving each order is
+materially different from scraping, but high-frequency automated ordering may
+still be argued to breach those terms. The mitigation is that a human approves
+every order — not that the clause stops applying. **Account suspension is a real
+risk and it would hit your actual grocery account.** Decide with that in mind.
+
+On native Windows there is no Bash sandbox — permission rules and these hooks
+are the entire safety boundary.
 
 ---
 
@@ -150,7 +211,9 @@ Hooks are pure bash and live under `hooks/scripts/`.
 
 ## Disclaimer
 
-This plugin issues **destructive calls** when you ask it to (recipe deletion, list deletion, task deletion, grocery merges, wallet adjustments). The destructive-confirm hook gives you a chance to abort, but always review what a skill is about to do before approving the tool call.
+This plugin issues **destructive calls** when you ask it to (recipe deletion, list deletion, task deletion, grocery merges, wallet adjustments). The destructive-confirm hook is advisory only — it describes what is about to happen, it does not block. Always review what a skill is about to do before approving the tool call.
+
+`kitchen-concierge` additionally **spends real money** and carries a terms-of-service and account-suspension risk. See [Grocery ordering](#grocery-ordering-kitchen-concierge).
 
 ---
 

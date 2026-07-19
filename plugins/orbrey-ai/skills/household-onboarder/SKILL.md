@@ -2,7 +2,10 @@
 name: household-onboarder
 description: Walk a new member through joining an Orbrey household — profile, role, dietary prefs, calendar OAuth, allowance setup. Markdown checklist with live MCP calls at each step.
 argument-hint: [member-name-and-role]
-allowed-tools: Read Write Edit
+allowed-tools: >
+  Read Write Edit AskUserQuestion
+  mcp__orbrey__households_list mcp__orbrey__rewards_wallets
+  mcp__orbrey__calendar_list mcp__orbrey__lists_list
 effort: medium
 ---
 
@@ -42,14 +45,50 @@ Required input:
 
 ## Phase 2: Dietary & Sensory
 
-Capture once now so meal plans don't have to ask each time:
+**This phase writes the file that gates grocery ordering.** `kitchen-concierge`
+refuses to plan or buy food for a household whose dietary profile is missing,
+incomplete or stale — so treat this as data capture, not conversation.
 
-- Allergies (severity flagged: severe / moderate / preference)
-- Dietary preferences (vegetarian / vegan / pescatarian / halal / kosher / none)
-- Cultural meal patterns (e.g. Friday is chicken-soup night)
-- Strong dislikes (mushrooms, blue cheese — list per member)
+Capture per member:
 
-These flow into `meal-planner` constraints.
+- **Allergies and restrictions**, each tagged with a tier from the four-value
+  enum below. Do not use free-text severity words; the tiers drive different
+  code paths.
+- **Aliases for every allergy** — this is the part people skip and it is the
+  part that matters. Retailer product titles say "almond meal", never "tree
+  nuts". A restriction with no aliases will not match the product on the shelf.
+- **Dietary pattern** — omnivore / vegetarian / vegan / pescatarian / halal / kosher
+- **Cultural meal patterns** (e.g. fish on Fridays), with the days they apply
+- **Who confirmed it and when.** An allergy record with no attribution is a
+  rumour, and this data ends up buying food.
+
+| Tier | Use for | Consequence |
+|---|---|---|
+| `life_threatening` | Anaphylaxis risk | Recipe dropped entirely; product blocked; **no substitutions**; a missing profile **aborts** an ordering run |
+| `medical_avoid` | Coeliac, low-FODMAP, medical diets | Same fail-closed posture; substitutions need human review |
+| `ethical_religious` | Vegan, halal, kosher, day-scoped rules | Hard filter on planning and ordering; missing data warns rather than aborts |
+| `dislike` | Preferences (mushrooms, blue cheese) | Scoring penalty only; never blocks a purchase |
+
+### Write the profile
+
+Write two artefacts, not one:
+
+1. The markdown record for the household (Phase 7).
+2. **`${CLAUDE_PLUGIN_DATA}/household-dietary-profiles.json`** — the machine-readable
+   profile, conforming to
+   `${CLAUDE_PLUGIN_ROOT}/skills/kitchen-concierge/templates/dietary-profile-schema.json`.
+
+Read the existing JSON first and **merge** this member into `members[]` — never
+overwrite the file, or you will silently drop everyone onboarded before them.
+Set `updated_at` to now. List members with no restrictions too, with an empty
+`restrictions` array: a member who is absent is indistinguishable from a member
+who was never asked, and the ordering gate treats absence as a hard stop.
+
+> Interim storage. The orbrey MCP has no members domain and no dietary field, so
+> this lives in a local file until `members.list` / `members.set_dietary_profile`
+> land on the worker. Being per-machine, a scheduled run on a device that never
+> saw onboarding will fail closed rather than order blind — that is the intended
+> behaviour, not a bug, but it is why the MCP-backed version is the destination.
 
 ---
 
@@ -108,7 +147,8 @@ Don't auto-add them to a rotation that's already running — the admin should re
 Render via `templates/output-template.md`. Include:
 
 - Profile captured (name, role, age, contact)
-- Dietary record
+- Dietary record — and confirmation that `household-dietary-profiles.json` was
+  written, showing how many members it now covers
 - Scope grants table (with explicit user signoff)
 - Calendar connection status
 - Wallet status
@@ -123,8 +163,14 @@ Save the output to `onboarded-{{member-name}}-{{DD-MM-YYYY}}.md` so the househol
 1. **Never grant scopes without explicit confirmation.** Surface the table; ask for signoff per row.
 2. **Default to least privilege** for kids. Read-only is the safer default until trust is proven.
 3. **Don't connect external calendars without the member's consent.** OAuth is the member's authorisation, not the admin's.
-4. **Capture allergies as data, not memory.** Severe allergies must be flagged in the output as `[SEVERE]` so meal-planner can hard-block.
-5. **Australian English. DD/MM/YYYY.**
+4. **Capture allergies as data, not memory.** Every restriction goes into
+   `household-dietary-profiles.json` with a tier and aliases. Prose in a markdown
+   file is not data — nothing reads it. `life_threatening` entries are what
+   `meal-planner` hard-blocks on and what `kitchen-concierge` refuses to order
+   without.
+5. **Merge, never overwrite, the dietary profile.** Read it, add or update this
+   member, write it back.
+6. **Australian English. DD/MM/YYYY.**
 
 ---
 

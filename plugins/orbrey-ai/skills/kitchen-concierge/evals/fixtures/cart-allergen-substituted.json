@@ -1,0 +1,4 @@
+{ "items": [
+    { "name": "oat milk", "quantity": 1, "unit": "L", "matched_product": "Cashew Milk 1L", "unit_price_aud": 4.50,
+      "substituted": true, "substitution_note": "Oat milk unavailable - substituted cashew milk", "substitution": "allow" }
+  ], "delivery_mode": "click-and-collect", "store_postcode": "2026" }

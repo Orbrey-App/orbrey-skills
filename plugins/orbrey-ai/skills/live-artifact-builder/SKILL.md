@@ -8,8 +8,6 @@ effort: medium
 
 # Live Artifact Builder
 
-ultrathink
-
 ## User Context
 
 The user wants to build a live artifact:

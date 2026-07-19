@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Kitchen-concierge runtime state.
+#
+# These live under ${CLAUDE_PLUGIN_DATA} in normal operation, but a local test
+# run or a misconfigured data dir can drop them in the working tree. They can
+# contain an authenticated grocery session's contents — delivery address, order
+# history, product-level purchase data — so they must never be committed.
+.kitchen-concierge/
+pending-cart.json
+pending-order.json
+order-session.json
+household-dietary-profiles.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

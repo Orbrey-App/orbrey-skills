@@ -8,8 +8,6 @@ effort: high
 
 # Calendar Conflict Finder
 
-ultrathink
-
 ## User Context
 
 The user wants to find calendar conflicts:

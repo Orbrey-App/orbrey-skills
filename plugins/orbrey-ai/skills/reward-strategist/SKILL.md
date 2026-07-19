@@ -8,8 +8,6 @@ effort: high
 
 # Reward Strategist
 
-ultrathink
-
 ## User Context
 
 The user wants a reward strategy:
