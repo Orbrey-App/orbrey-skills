@@ -10,12 +10,11 @@
  * It proves that verify_cart.mjs ran and the cart passed its assertions. It
  * does NOT prove a human agreed to spend the money. Those are different claims.
  *
- * Returning "allow" on a valid marker would let the agent satisfy its own spend
- * authorisation end to end, with no human in the loop at any point — which is
- * precisely the control this file exists to prevent. The marker's job is to
- * force the verification step and to put the real total in front of the user;
- * the permission prompt's job is to get consent. Collapsing the two silently
- * removes the second one.
+ * A valid marker is never permission to satisfy a spend without a human in the
+ * loop. That is precisely the control this file exists to protect. The marker
+ * forces verification and puts the real total in front of the user; the
+ * permission prompt gets consent. Collapsing the two silently removes the
+ * second one.
  *
  * A hook `ask` is floored at a real prompt — it cannot be auto-accepted by
  * permission mode. That is the property we are buying here.
@@ -36,23 +35,28 @@ import { readFileSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { paths, MARKER_TTL_MINUTES } from '../skills/kitchen-concierge/scripts/lib/paths.mjs';
 
-/** Emit a PreToolUse decision and exit. */
-function decide(permissionDecision, reason) {
-  process.stdout.write(
-    JSON.stringify({
-      hookSpecificOutput: {
-        hookEventName: 'PreToolUse',
-        permissionDecision,
-        permissionDecisionReason: reason,
-      },
-    })
-  );
-  process.exit(0);
+/** Ask the user for permission before this browser click proceeds. */
+function ask(reason) {
+  const output = JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'ask',
+      permissionDecisionReason: reason,
+    },
+  });
+  process.stdout.write(output, () => process.exit(0));
 }
 
-/** Ask for a user decision even when no kitchen order session is active. */
-function askForClick(reason) {
-  decide('ask', reason);
+/** Block this browser click until the order state is safe. */
+function deny(reason) {
+  const output = JSON.stringify({
+    hookSpecificOutput: {
+      hookEventName: 'PreToolUse',
+      permissionDecision: 'deny',
+      permissionDecisionReason: reason,
+    },
+  });
+  process.stdout.write(output, () => process.exit(0));
 }
 
 async function readStdin() {
@@ -71,13 +75,12 @@ try {
   // tell whether this is the checkout click, so we deny. Without a session,
   // still ask before letting the browser click proceed.
   if (existsSync(paths.orderSession())) {
-    decide(
-      'deny',
+    deny(
       'Order gate could not parse the tool payload during an active grocery order. ' +
         'Denying rather than guessing. Re-run the order step.'
     );
   }
-  askForClick(
+  ask(
     'The order gate could not read this browser click. Confirm the click in the permission prompt; this does not authorise a purchase.'
   );
 }
@@ -91,7 +94,7 @@ try {
 // ---------------------------------------------------------------------------
 
 if (!existsSync(paths.orderSession())) {
-  askForClick(
+  ask(
     'No Kitchen Concierge order session is active. Confirm this browser click in the permission prompt; this does not authorise a purchase.'
   );
 }
@@ -100,8 +103,7 @@ let session;
 try {
   session = JSON.parse(readFileSync(paths.orderSession(), 'utf8'));
 } catch (err) {
-  decide(
-    'deny',
+  deny(
     `Order gate could not read the order session file (${err.message}). ` +
       'Denying rather than proceeding with an unknown order state.'
   );
@@ -136,22 +138,20 @@ const looksLikeCheckout = CHECKOUT_PATTERNS.some((p) => p.test(toolInputText));
 
 if (session.state === 'building') {
   if (looksLikeCheckout) {
-    decide(
-      'deny',
+    deny(
       'This looks like a checkout action, but the cart has not been verified yet. ' +
         'Run scripts/verify_cart.mjs with the review-page total first — it checks the ' +
         'spend ceiling and the household allergen list. Do not click through to payment ' +
         'without it.'
     );
   }
-  askForClick(
+  ask(
     'Kitchen Concierge is preparing the cart. Confirm this browser interaction; this approval is not checkout consent.'
   );
 }
 
 if (session.state !== 'verified') {
-  decide(
-    'deny',
+  deny(
     `Order gate saw an unrecognised session state "${session.state}". Denying. ` +
       'Restart the order step.'
   );
@@ -163,8 +163,7 @@ if (session.state !== 'verified') {
 // ---------------------------------------------------------------------------
 
 if (!existsSync(paths.approvalMarker())) {
-  decide(
-    'deny',
+  deny(
     'The order session is marked verified but no approval marker exists. ' +
       'Re-run scripts/verify_cart.mjs before attempting checkout.'
   );
@@ -174,18 +173,17 @@ let marker;
 try {
   marker = JSON.parse(readFileSync(paths.approvalMarker(), 'utf8'));
 } catch (err) {
-  decide('deny', `Approval marker is unreadable (${err.message}). Re-run verify_cart.mjs.`);
+  deny(`Approval marker is unreadable (${err.message}). Re-run verify_cart.mjs.`);
 }
 
 const ageMinutes = (Date.now() - Date.parse(marker.created_at)) / 60_000;
 
 if (!Number.isFinite(ageMinutes)) {
-  decide('deny', 'Approval marker has no valid timestamp. Re-run verify_cart.mjs.');
+  deny('Approval marker has no valid timestamp. Re-run verify_cart.mjs.');
 }
 
 if (ageMinutes > MARKER_TTL_MINUTES) {
-  decide(
-    'deny',
+  deny(
     `Approval marker is ${Math.round(ageMinutes)} minutes old (limit ${MARKER_TTL_MINUTES}). ` +
       'Prices and stock may have moved. Re-run verify_cart.mjs against a fresh review-page total.'
   );
@@ -194,8 +192,7 @@ if (ageMinutes > MARKER_TTL_MINUTES) {
 // The session records the cart hash it expects. If the agent rebuilt or mutated
 // the cart after verification, the hashes diverge and we deny.
 if (session.cart_hash && session.cart_hash !== marker.cart_hash) {
-  decide(
-    'deny',
+  deny(
     'The cart changed after it was verified (hash mismatch). Re-run verify_cart.mjs ' +
       'against the current cart before checking out.'
   );
@@ -205,14 +202,13 @@ if (session.cart_hash && session.cart_hash !== marker.cart_hash) {
 // Everything checks out. Hand the decision to the human, with the number that
 // matters in front of them.
 //
-// Again: "ask", not "allow". See the header comment.
+// This final path explicitly asks the user for permission.
 // ---------------------------------------------------------------------------
 
 const total = Number(marker.total_aud).toFixed(2);
 const ceiling = Number(marker.max_total_aud).toFixed(2);
 
-decide(
-  'ask',
+ask(
   `About to place a REAL grocery order.\n\n` +
     `  Total:  $${total} AUD (your ceiling: $${ceiling})\n` +
     `  Items:  ${marker.item_count}\n` +
