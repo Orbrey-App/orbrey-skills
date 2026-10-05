@@ -66,8 +66,6 @@ The `kitchen-concierge` skill is separate and uses the user's own Chrome session
 
 The plugin includes three Node.js hooks: an advisory prompt for destructive tool calls, an advisory recipe reminder, and a fail-closed checkout gate for Kitchen Concierge. The checkout gate asks before every Claude in Chrome click, including cart-preparation clicks outside an active order session; it denies checkout when the cart has not passed verification and still requires a separate human decision for the final purchase.
 
-The `icon` and `privacyPolicyUrl` fields in `.claude-plugin/plugin.json` supply Claude's plugin directory listing. Claude Code itself ignores those listing fields. The PNG is a listing asset, so the directory validates it as an image rather than interpreting its binary contents as code.
-
 ## Development
 
 - Skills live under `skills/`.
