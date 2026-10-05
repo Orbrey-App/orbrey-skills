@@ -3,10 +3,10 @@ name: grocery-organizer
 description: Review and organise household grocery items. Propose duplicate merges and apply them only after the user confirms the exact pair.
 argument-hint: [optional-store-name-or-style]
 allowed-tools: >
-  Read Write Edit AskUserQuestion
-  mcp__orbrey__grocery_list mcp__orbrey__grocery_list_lists
-  mcp__orbrey__grocery_add_items
-  mcp__orbrey__grocery_merge mcp__orbrey__pantry_list
+  Read AskUserQuestion
+  mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__grocery_list_lists
+  mcp__plugin_orbrey-ai_orbrey__grocery_add_items
+  mcp__plugin_orbrey-ai_orbrey__grocery_merge mcp__plugin_orbrey-ai_orbrey__pantry_list
 effort: medium
 ---
 

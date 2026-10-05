@@ -9,10 +9,11 @@ description: >
   use orbrey-ai:meal-planner instead.
 argument-hint: "[setup | run | approve | status]"
 allowed-tools: >
-  Read Write Edit Bash AskUserQuestion Skill
-  mcp__orbrey__members_list mcp__orbrey__pantry_list
-  mcp__orbrey__grocery_list mcp__orbrey__grocery_add_item
-  mcp__orbrey__recipes_list mcp__orbrey__recipes_create
+  Edit(~/.claude/plugins/data/orbrey-ai/**) AskUserQuestion
+  Skill(orbrey-ai:meal-planner) Skill(orbrey-ai:grocery-organizer)
+  mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__pantry_list
+  mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__grocery_add_item
+  mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__recipes_create
   mcp__scheduled-tasks__create_scheduled_task
   mcp__scheduled-tasks__list_scheduled_tasks
 effort: high
@@ -76,7 +77,7 @@ Error: unknown-subcommand "<value>". Valid: setup | run | approve | status. Empt
 
 **Run before any store interaction — Phase 3.6 and Phase 5 only.** Skip for `setup` and `status`.
 
-Check whether tools matching `mcp__claude-in-chrome__*` are available.
+Check whether `mcp__claude-in-chrome__click` is available.
 
 If they are absent, **halt** with:
 
@@ -197,6 +198,7 @@ Run **Phase 0.5** first. Then:
 6. Call members_list again immediately before cart verification. Write the current member IDs and the current time to CLAUDE_PLUGIN_DATA/authorised-roster.json as { "refreshed_at": "ISO timestamp", "member_ids": ["..."] }. If the roster changed or no longer exactly matches the local dietary profile, stop. Then verify:
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/skills/kitchen-concierge/scripts/verify_cart.mjs" \
+     --data-dir "${CLAUDE_PLUGIN_DATA}" \
      --cart "${CLAUDE_PLUGIN_DATA}/pending-cart.json" \
      --total <retailer's review-page total> \
      --store "<store>" --mode <click-and-collect|delivery>

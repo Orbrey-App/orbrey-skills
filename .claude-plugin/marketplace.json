@@ -11,9 +11,9 @@
       "name": "orbrey-ai",
       "version": "0.3.1",
       "description": "12 skills, 3 agents, and 6 commands for Orbrey household planning and coordination. Includes an optional Claude-only browser ordering workflow with code-enforced checks and human checkout approval. Connects to the hosted Orbrey MCP server over OAuth.",
-      "source": "./plugins/orbrey-ai",
+      "source": "./plugins/orbrey-claude",
       "category": "household",
-      "homepage": "https://github.com/orbrey/orbrey-skills/tree/main/plugins/orbrey-ai"
+      "homepage": "https://github.com/Orbrey-App/orbrey-skills/tree/main/plugins/orbrey-claude"
     }
   ]
 }

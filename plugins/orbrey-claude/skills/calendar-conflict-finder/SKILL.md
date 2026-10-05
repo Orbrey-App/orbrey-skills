@@ -2,7 +2,7 @@
 name: calendar-conflict-finder
 description: Find overlapping household calendar events in a requested date range using only events returned by the authorised Orbrey calendar connection.
 argument-hint: [date-range]
-allowed-tools: AskUserQuestion mcp__orbrey__calendar_list
+allowed-tools: AskUserQuestion mcp__plugin_orbrey-ai_orbrey__calendar_list
 effort: medium
 ---
 

@@ -29,7 +29,7 @@ try {
 }
 
 const toolName = input.tool_name ?? '';
-if (!toolName.startsWith('mcp__orbrey__')) process.exit(0);
+if (!toolName.startsWith('mcp__plugin_orbrey-ai_orbrey__')) process.exit(0);
 
 const args = input.tool_input ?? {};
 const household = args.household_id ?? '<unknown>';

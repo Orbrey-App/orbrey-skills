@@ -3,11 +3,11 @@ name: meal-planner
 description: Build a 7/14/28-day meal plan from the household recipe library, respecting dietary tags, household size, calendar busy-nights, and pantry stock. Shows proposed grocery changes and writes them only after confirmation.
 argument-hint: [duration-and-constraints]
 allowed-tools: >
-  Read Write Edit AskUserQuestion
-  mcp__orbrey__recipes_list mcp__orbrey__calendar_list mcp__orbrey__members_list
-  mcp__orbrey__grocery_list mcp__orbrey__grocery_add_item
-  mcp__orbrey__pantry_list mcp__orbrey__meal_plan_week
-  mcp__orbrey__meal_plan_add_meals mcp__orbrey__meal_plan_sync_to_grocery
+  Read AskUserQuestion
+  mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__calendar_list mcp__plugin_orbrey-ai_orbrey__members_list
+  mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__grocery_add_item
+  mcp__plugin_orbrey-ai_orbrey__pantry_list mcp__plugin_orbrey-ai_orbrey__meal_plan_week
+  mcp__plugin_orbrey-ai_orbrey__meal_plan_add_meals mcp__plugin_orbrey-ai_orbrey__meal_plan_sync_to_grocery
 effort: high
 ---
 

@@ -44,7 +44,7 @@ The separate ChatGPT package is [`../orbrey-openai`](../orbrey-openai). It share
 ## Installation
 
 ```text
-/plugin marketplace add orbrey/orbrey-ai-marketplace
+/plugin marketplace add Orbrey-App/orbrey-skills
 /plugin install orbrey-ai@orbrey-ai-marketplace
 ```
 
@@ -57,6 +57,8 @@ Each connection is authorised for one household. Re-authorise to change househol
 The current MCP registry exposes 63 tools. The [tool inventory](https://github.com/Orbrey-App/orbrey-mcp/blob/main/docs/tool-inventory.md) lists their scopes, read/write behavior, confirmation gates, and MCP App resources. The available tool list is filtered by the current connection's granted scopes. Use returned records and tool descriptions as the source of truth. `household_id` is optional for many tools; supplying a different household ID does not switch the authorisation. Some meal-planning, pantry, and rewards tools may require Orbrey Plus.
 
 Rewards are denominated in gems. Task completion applies the configured task reward automatically; wallet adjustments are separate, consequential actions and require explicit user confirmation. Grocery and shared-list tools update Orbrey records only; they do not search retailers or purchase goods.
+
+The browser fetches the CDN assets named in each generated artifact. If an artifact uses a public API, its code can send request data to that API; review the dependencies and code before using sensitive data.
 
 The `kitchen-concierge` skill is separate and uses the user's own Chrome session. It keeps its dietary profile on the Claude device, rebuilds the cart before checkout, applies a code-enforced order limit, and requires a human checkout decision. It is not included in the ChatGPT package. Retailer terms place restrictions on site use, and do not establish permission for browser automation. Read the skill's disclosure and the current [Woolworths terms](https://www.woolworths.com.au/shop/services/terms-and-conditions) or [Coles website terms](https://www.coles.com.au/important-information/terms/website-terms-conditions) before enabling it.
 

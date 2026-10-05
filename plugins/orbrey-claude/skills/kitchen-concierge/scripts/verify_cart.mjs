@@ -9,7 +9,7 @@
  * structurally unable to reach checkout without passing through it.
  *
  * Usage:
- *   node verify_cart.mjs --cart <cart.json> --total <aud> [--items <n>]
+ *   node verify_cart.mjs --cart <cart.json> --total <aud> [--data-dir <path>]
  *                        [--store <name>] [--mode click-and-collect|delivery]
  *
  * --total is the figure scraped from the retailer's review-order page, NOT a
@@ -28,7 +28,7 @@
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { paths } from './lib/paths.mjs';
+import { paths, setDataDirectory } from './lib/paths.mjs';
 import {
   collectRestrictions,
   checkItem,
@@ -75,8 +75,12 @@ function readJson(path, label) {
 
 const args = parseArgs(process.argv.slice(2));
 
+if (args['data-dir'] && args['data-dir'] !== 'true') {
+  setDataDirectory(args['data-dir']);
+}
+
 if (!args.cart || !args.total) {
-  fail(EXIT.PRECONDITION, 'usage: verify_cart.mjs --cart <path> --total <aud>');
+  fail(EXIT.PRECONDITION, 'usage: verify_cart.mjs --cart <path> --total <aud> [--data-dir <path>]');
 }
 
 const scrapedTotal = Number(args.total);

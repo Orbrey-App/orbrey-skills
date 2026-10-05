@@ -2,7 +2,7 @@
 name: household-onboarder
 description: Guide a user through checking an existing Orbrey household connection and preparing onboarding steps in the Orbrey app.
 argument-hint: [member-name-and-role]
-allowed-tools: Read mcp__orbrey__members_list mcp__orbrey__calendar_list mcp__orbrey__rewards_wallets mcp__orbrey__tasks_list
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__calendar_list mcp__plugin_orbrey-ai_orbrey__rewards_wallets mcp__plugin_orbrey-ai_orbrey__tasks_list
 effort: medium
 ---
 

@@ -2,7 +2,7 @@
 name: reward-strategist
 description: Review household reward wallets and catalogue, then design a gem-based rewards proposal grounded in returned data and user choices.
 argument-hint: [household-context]
-allowed-tools: Read mcp__orbrey__members_list mcp__orbrey__rewards_wallets mcp__orbrey__rewards_list mcp__orbrey__tasks_list mcp__orbrey__rewards_adjust
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__rewards_wallets mcp__plugin_orbrey-ai_orbrey__rewards_list mcp__plugin_orbrey-ai_orbrey__tasks_list mcp__plugin_orbrey-ai_orbrey__rewards_adjust
 effort: high
 ---
 

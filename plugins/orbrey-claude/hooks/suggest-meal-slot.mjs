@@ -23,7 +23,7 @@ try {
   process.exit(0);
 }
 
-if (input.tool_name !== 'mcp__orbrey__recipes_create') process.exit(0);
+if (input.tool_name !== 'mcp__plugin_orbrey-ai_orbrey__recipes_create') process.exit(0);
 
 // MCP transports shape the response differently — try the common locations.
 const r = input.tool_response ?? {};

@@ -30,11 +30,10 @@ const results = [];
 
 function setup() {
   DATA = mkdtempSync(join(tmpdir(), 'kc-eval-'));
-  process.env.CLAUDE_PLUGIN_DATA = DATA;
 }
 
 function reset({ config = { max_total_aud: 150 }, profile = 'profile-tree-nuts.json', ageDays = 0 } = {}) {
-  for (const f of ['pending-order.json', 'order-session.json', 'household-dietary-profiles.json', 'config.json']) {
+  for (const f of ['pending-order.json', 'order-session.json', 'household-dietary-profiles.json', 'authorised-roster.json', 'config.json']) {
     const p = join(DATA, f);
     if (existsSync(p)) rmSync(p);
   }
@@ -43,15 +42,27 @@ function reset({ config = { max_total_aud: 150 }, profile = 'profile-tree-nuts.j
     const p = JSON.parse(readFileSync(join(FIXTURES, profile), 'utf8'));
     p.updated_at = new Date(Date.now() - ageDays * 86_400_000).toISOString();
     writeFileSync(join(DATA, 'household-dietary-profiles.json'), JSON.stringify(p));
+    writeFileSync(
+      join(DATA, 'authorised-roster.json'),
+      JSON.stringify({ refreshed_at: new Date().toISOString(), member_ids: p.members.map((member) => member.member_id) })
+    );
   }
+}
+
+function childEnvironment() {
+  const childEnv = { CLAUDE_PLUGIN_DATA: DATA };
+  if (process.platform === 'win32' && process.env.SystemRoot) {
+    childEnv.SystemRoot = process.env.SystemRoot;
+  }
+  return childEnv;
 }
 
 function runVerify(cartFixture, total) {
   try {
     const stdout = execFileSync(
       process.execPath,
-      [VERIFY, '--cart', join(FIXTURES, cartFixture), '--total', String(total)],
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], env: process.env }
+      [VERIFY, '--data-dir', DATA, '--cart', join(FIXTURES, cartFixture), '--total', String(total)],
+      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], env: childEnvironment() }
     );
     return { code: 0, stdout, stderr: '' };
   } catch (err) {
@@ -66,7 +77,7 @@ function runGate(hookInput) {
       encoding: 'utf8',
       input: payload,
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: process.env,
+      env: childEnvironment(),
     });
     return { code: 0, stdout };
   } catch (err) {

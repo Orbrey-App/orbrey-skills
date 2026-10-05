@@ -10,6 +10,13 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { mkdirSync } from 'node:fs';
 
+let dataDirectoryOverride;
+
+/** Set the data root explicitly when a subprocess cannot inherit plugin env. */
+export function setDataDirectory(directory) {
+  dataDirectoryOverride = directory;
+}
+
 /**
  * CLAUDE_PLUGIN_DATA is the documented persistent location, but it is not
  * guaranteed to be set in every host (scheduled runs, older CLI versions,
@@ -18,8 +25,9 @@ import { mkdirSync } from 'node:fs';
  */
 export function dataDir() {
   const base =
+    dataDirectoryOverride ||
     process.env.CLAUDE_PLUGIN_DATA ||
-    join(homedir(), '.claude', 'orbrey-ai', 'kitchen-concierge');
+    join(homedir(), '.claude', 'plugins', 'data', 'orbrey-ai');
   mkdirSync(base, { recursive: true });
   return base;
 }

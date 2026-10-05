@@ -32,7 +32,7 @@ Lookup material the SKILL.md doesn't carry inline. Read on demand, not eagerly.
 | Custom Tailwind colours not working | The play CDN supports `tailwind.config = {...}` but the script tag setting the config must come AFTER the Tailwind CDN tag and BEFORE rendered HTML. |
 | `Module not found` in vanilla script | Inline scripts can't `import` from npm. Use `<script type="module">` with full HTTPS URLs (e.g. `import { animate } from 'https://cdn.skypack.dev/motion'`). |
 | Babel slow on first render | Expected — Babel compiles in-browser. ~200-500 ms on first paint. Don't worry below ~1000 lines of JSX. |
-| `process is not defined` | You're using a Node-only API. Replace with browser equivalents (e.g. `process.env.X` → hard-coded const or `localStorage`). |
+| `process is not defined` | You're using a Node-only API. Replace it with a browser equivalent, such as a constant or `localStorage` for saved state. |
 | `useState` resets every keystroke | Component is being re-defined inside another component. Hoist component definitions to the top level. |
 | Chart.js double-renders / leaks | Always return `() => chart.destroy()` from the chart's `useEffect`. |
 

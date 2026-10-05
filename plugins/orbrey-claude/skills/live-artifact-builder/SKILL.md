@@ -2,7 +2,7 @@
 name: live-artifact-builder
 description: Generate single-file live HTML or React artifacts for claude.ai or Claude Cowork canvas. Use when the user wants a working interactive demo, calculator, dashboard, mini-game, form, data visualisation, or tool prototype, and asks for an "artifact", "live demo", or wants to "render" something in the canvas.
 argument-hint: [artifact concept]
-allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
+allowed-tools: Read, Glob, Grep, AskUserQuestion
 effort: medium
 ---
 
@@ -86,7 +86,7 @@ Pick the right preamble:
 Before sending to the user, verify against this checklist (mental, not posted):
 
 - [ ] Imports/CDN tags present and matching what the code uses
-- [ ] No `process.env`, no `require()`, no Node-only APIs
+- [ ] No server-side runtime variables, CommonJS loading, or Node-only APIs
 - [ ] All JSX tags closed; no stray `<` or `>` characters
 - [ ] Every `<input>` has an associated `<label>` (or `aria-label`)
 - [ ] Focus is visible (default browser ring or a Tailwind `focus:ring-*` utility)

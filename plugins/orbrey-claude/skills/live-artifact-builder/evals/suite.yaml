@@ -54,7 +54,7 @@ test_cases:
       - "Output is a single fenced code block — no multi-file scaffolding, no build steps."
       - "Uses React 18 createRoot (not ReactDOM.render) and Tailwind via CDN as the defaults."
       - "Every input/control has a label or aria-label; focus styling present."
-      - "No process.env, no require(), no Node-only APIs, no localhost URLs."
+      - "No server-side runtime variables, CommonJS loading, Node-only APIs, or localhost URLs."
       - "Includes a brief comment header (name, purpose, dependencies, how to render)."
     timeout_seconds: 180
 

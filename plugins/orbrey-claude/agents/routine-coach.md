@@ -3,7 +3,7 @@ name: routine-coach
 description: Briefly guide a household member through today's routine tasks and record only completions they confirm.
 model: sonnet
 effort: medium
-allowed-tools: Read mcp__orbrey__tasks_list mcp__orbrey__tasks_set_status mcp__orbrey__tasks_delete_occurrence
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__tasks_list mcp__plugin_orbrey-ai_orbrey__tasks_set_status mcp__plugin_orbrey-ai_orbrey__tasks_delete_occurrence
 ---
 
 # Routine Coach

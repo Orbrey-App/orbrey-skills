@@ -3,7 +3,7 @@ name: meal-plan-orchestrator
 description: Coordinate recipe, calendar, meal-plan, pantry, and grocery results for a household meal plan; return evidence and unresolved constraints to the parent workflow.
 model: sonnet
 effort: high
-allowed-tools: Read mcp__orbrey__recipes_list mcp__orbrey__recipes_get mcp__orbrey__calendar_list mcp__orbrey__grocery_list mcp__orbrey__pantry_list mcp__orbrey__meal_plan_week mcp__orbrey__members_list
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__recipes_get mcp__plugin_orbrey-ai_orbrey__calendar_list mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__pantry_list mcp__plugin_orbrey-ai_orbrey__meal_plan_week mcp__plugin_orbrey-ai_orbrey__members_list
 ---
 
 # Meal Plan Orchestrator

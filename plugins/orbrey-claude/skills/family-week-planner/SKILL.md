@@ -2,7 +2,7 @@
 name: family-week-planner
 description: Create a concise weekly household view from returned meals, task occurrences, and calendar events.
 argument-hint: [week-start-date]
-allowed-tools: Read Write Edit mcp__orbrey__meal_plan_week mcp__orbrey__tasks_list mcp__orbrey__calendar_list
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__meal_plan_week mcp__plugin_orbrey-ai_orbrey__tasks_list mcp__plugin_orbrey-ai_orbrey__calendar_list
 ---
 
 # Family Week Planner

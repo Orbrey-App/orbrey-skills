@@ -3,7 +3,7 @@ name: household-curator
 description: Produce a read-only household digest from the authorised calendar, tasks, recipes, grocery list, pantry, and rewards data that is available.
 model: sonnet
 effort: max
-allowed-tools: Read mcp__orbrey__calendar_list mcp__orbrey__tasks_list mcp__orbrey__recipes_list mcp__orbrey__grocery_list mcp__orbrey__pantry_list mcp__orbrey__rewards_wallets
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__calendar_list mcp__plugin_orbrey-ai_orbrey__tasks_list mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__pantry_list mcp__plugin_orbrey-ai_orbrey__rewards_wallets
 ---
 
 # Household Curator

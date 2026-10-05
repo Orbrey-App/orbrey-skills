@@ -2,7 +2,7 @@
 name: routine-builder
 description: Design and, after approval, create household routines using Orbrey's supported recurring task fields.
 argument-hint: [routine-type-and-member]
-allowed-tools: Read mcp__orbrey__members_list mcp__orbrey__tasks_create mcp__orbrey__tasks_list
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__tasks_create mcp__plugin_orbrey-ai_orbrey__tasks_list
 effort: medium
 ---
 

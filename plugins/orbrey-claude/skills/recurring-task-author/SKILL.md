@@ -2,7 +2,7 @@
 name: recurring-task-author
 description: Turn a natural-language task schedule into Orbrey's supported recurrence fields and create it after approval.
 argument-hint: [natural-language-schedule]
-allowed-tools: Read mcp__orbrey__members_list mcp__orbrey__tasks_create mcp__orbrey__tasks_list
+allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__tasks_create mcp__plugin_orbrey-ai_orbrey__tasks_list
 effort: medium
 ---
 
