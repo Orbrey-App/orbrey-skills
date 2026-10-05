@@ -64,4 +64,4 @@ Only if you're already heading to the shops:
 
 - Cook the halloumi & pumpkin bowls
 - If you liked the pantry-led approach, run `/plan-week` and ask it to weight pantry-friendly recipes higher next week
-- Run `/orbrey-ai:grocery-organizer` if you want to add the express-shop items now
+- Run `/orbrey:grocery-organizer` if you want to add the express-shop items now

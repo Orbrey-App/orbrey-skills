@@ -8,7 +8,7 @@
 
 import { homedir } from 'node:os';
 import { join } from 'node:path';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, renameSync } from 'node:fs';
 
 let dataDirectoryOverride;
 
@@ -24,10 +24,21 @@ export function setDataDirectory(directory) {
  * the user's home rather than writing into the plugin directory.
  */
 export function dataDir() {
-  const base =
-    dataDirectoryOverride ||
-    process.env.CLAUDE_PLUGIN_DATA ||
-    join(homedir(), '.claude', 'plugins', 'data', 'orbrey-ai');
+  let base = dataDirectoryOverride || process.env.CLAUDE_PLUGIN_DATA;
+  if (!base) {
+    const dataRoot = join(homedir(), '.claude', 'plugins', 'data');
+    const currentPath = join(dataRoot, 'orbrey');
+    const previousPath = join(dataRoot, 'orbrey-ai');
+    if (!existsSync(currentPath) && existsSync(previousPath)) {
+      try {
+        renameSync(previousPath, currentPath);
+      } catch {
+        // Keep the existing user data usable if the host prevents migration.
+        base = previousPath;
+      }
+    }
+    base ??= currentPath;
+  }
   mkdirSync(base, { recursive: true });
   return base;
 }

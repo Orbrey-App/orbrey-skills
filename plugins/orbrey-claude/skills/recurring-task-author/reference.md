@@ -20,4 +20,4 @@ Resolve member names with members_list and use only returned member IDs. The too
 
 ## Confirmation and skipping
 
-Show the complete task definition before calling tasks_create. Ask for approval. To remove one future occurrence, explain that tasks_delete_occurrence is permanent and requires confirm=true and a returned occurrence ID. tasks_set_status accepts completed or open; it does not accept skipped.
+Show the complete task definition before calling tasks_create. Ask for approval. To remove future occurrences, explain that tasks_delete_occurrences is permanent and requires confirm=true and returned occurrence IDs in occurrence_ids. tasks_set_status accepts completed or open; it does not accept skipped.

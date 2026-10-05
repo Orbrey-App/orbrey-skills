@@ -4,9 +4,9 @@ description: Review and organise household grocery items. Propose duplicate merg
 argument-hint: [optional-store-name-or-style]
 allowed-tools: >
   Read AskUserQuestion
-  mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__grocery_list_lists
-  mcp__plugin_orbrey-ai_orbrey__grocery_add_items
-  mcp__plugin_orbrey-ai_orbrey__grocery_merge mcp__plugin_orbrey-ai_orbrey__pantry_list
+  mcp__plugin_orbrey_orbrey__grocery_list mcp__plugin_orbrey_orbrey__grocery_list_lists
+  mcp__plugin_orbrey_orbrey__grocery_add_items
+  mcp__plugin_orbrey_orbrey__grocery_merge mcp__plugin_orbrey_orbrey__pantry_list
 effort: medium
 ---
 

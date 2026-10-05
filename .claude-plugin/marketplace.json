@@ -1,16 +1,16 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "orbrey-ai-marketplace",
-  "description": "Orbrey AI Marketplace — household automation skills, agents, and commands that run on top of the orbrey-mcp Cloudflare Worker (meal planning, grocery, chores, routines, calendar, rewards).",
+  "description": "Orbrey plugin marketplace — household planning skills, agents, and commands backed by the hosted Orbrey MCP server (meal planning, groceries, chores, routines, and calendar).",
   "owner": {
     "name": "Orbrey",
     "email": "support@orbrey.com"
   },
   "plugins": [
     {
-      "name": "orbrey-ai",
-      "version": "0.3.1",
-      "description": "12 skills, 3 agents, and 6 commands for Orbrey household planning and coordination. Includes an optional Claude-only browser ordering workflow with code-enforced checks and human checkout approval. Connects to the hosted Orbrey MCP server over OAuth.",
+      "name": "orbrey",
+      "version": "0.3.3",
+      "description": "11 skills, 3 agents, and 7 commands for Orbrey household planning and coordination. Includes an optional Claude-only browser ordering workflow with code-enforced checks and human checkout approval. Connects to the hosted Orbrey MCP server over OAuth.",
       "source": "./plugins/orbrey-claude",
       "category": "household",
       "homepage": "https://github.com/Orbrey-App/orbrey-skills/tree/main/plugins/orbrey-claude"

@@ -56,7 +56,7 @@ CLAUDE_PLUGIN_DATA/config.json stores the local scheduler and retailer preferenc
   "brief_channel": "in-session"
 }
 
-Use the returned member roster from members_list. Do not cache a fallback roster from rewards_wallets: that tool is paid-scope data and does not replace the roster tool. The dietary profile is a separate local file keyed by Orbrey member IDs. The MCP does not notify household contacts; the brief is shown in the current Claude session.
+Use the returned member roster from members_list. Do not cache a fallback roster from another tool; use the roster returned for the current session. The dietary profile is a separate local file keyed by Orbrey member IDs. The MCP does not notify household contacts; the brief is shown in the current Claude session.
 ## 4. Cron cookbook
 
 | Cadence | Cron | Notes |

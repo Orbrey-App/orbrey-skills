@@ -1,7 +1,8 @@
 interface:
   display_name: "Calendar Conflict Finder"
   short_description: "Find conflicts in the household calendar"
-dependencies:
+  icon_small: "./assets/orbrey-logo-light-mark-only-1.svg"
+  icon_large: "./assets/orbrey-logo-light-mark-only-1.svg"
   tools:
     - type: "mcp"
       value: "orbrey"

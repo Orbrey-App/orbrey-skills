@@ -46,4 +46,4 @@ Inline message in chat. No file created.
 ## Next-action chain (suggest only)
 
 - `/family-digest` — Sunday-evening audit
-- `/orbrey-ai:calendar-conflict-finder` — if you spot something that looks tight
+- `/orbrey:calendar-conflict-finder` — if you spot something that looks tight

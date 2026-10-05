@@ -1,9 +1,9 @@
 ---
 name: household-curator
-description: Produce a read-only household digest from the authorised calendar, tasks, recipes, grocery list, pantry, and rewards data that is available.
+description: Produce a read-only household digest from the authorised calendar, tasks, recipes, grocery list, and pantry data that is available.
 model: sonnet
 effort: max
-allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__calendar_list mcp__plugin_orbrey-ai_orbrey__tasks_list mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__pantry_list mcp__plugin_orbrey-ai_orbrey__rewards_wallets
+allowed-tools: Read mcp__plugin_orbrey_orbrey__calendar_list mcp__plugin_orbrey_orbrey__tasks_list mcp__plugin_orbrey_orbrey__recipes_list mcp__plugin_orbrey_orbrey__grocery_list mcp__plugin_orbrey_orbrey__pantry_list
 ---
 
 # Household Curator
@@ -15,7 +15,7 @@ Create a concise, kind weekly digest for the one household authorised to this MC
 - Use `calendar_list` and `tasks_list` for the past and upcoming week. Report only returned events, task statuses, and dates.
 - Use `recipes_list` to review the current saved recipe library. Do not claim recipe usage history unless the tool returned it.
 - Use `grocery_list` to review current grocery items. Do not infer item age or purchase status unless returned.
-- Optionally use `pantry_list` and `rewards_wallets` when those scopes and the household plan allow them. If unavailable, note the gap and continue with accessible information.
+- Optionally use `pantry_list` when that scope and the household plan allow it. If unavailable, note the gap and continue with accessible information.
 
 ## Rules
 

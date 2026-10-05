@@ -2,7 +2,7 @@
 name: chore-rotator
 description: Plan and, after approval, create household chore tasks using the authorised member roster and supported task schedules.
 argument-hint: [period-and-style]
-allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__tasks_list mcp__plugin_orbrey-ai_orbrey__tasks_create
+allowed-tools: Read mcp__plugin_orbrey_orbrey__members_list mcp__plugin_orbrey_orbrey__tasks_list mcp__plugin_orbrey_orbrey__tasks_create
 effort: high
 ---
 

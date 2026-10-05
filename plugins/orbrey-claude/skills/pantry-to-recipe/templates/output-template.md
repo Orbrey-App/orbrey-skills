@@ -55,5 +55,5 @@ Only if you're up for a 2-item dash:
 ## Next Actions
 
 - Cook the recommended recipe
-- Run `/orbrey-ai:grocery-organizer` to add missing items if you want a fuller shop
+- Run `/orbrey:grocery-organizer` to add missing items if you want a fuller shop
 - Run `/plan-week` to push pantry-friendly recipes higher in next week's plan

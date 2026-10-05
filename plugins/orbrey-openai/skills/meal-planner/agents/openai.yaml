@@ -1,7 +1,8 @@
 interface:
   display_name: "Meal Planner"
   short_description: "Plan meals with recipes and calendar"
-dependencies:
+  icon_small: "./assets/orbrey-logo-light-mark-only-1.svg"
+  icon_large: "./assets/orbrey-logo-light-mark-only-1.svg"
   tools:
     - type: "mcp"
       value: "orbrey"

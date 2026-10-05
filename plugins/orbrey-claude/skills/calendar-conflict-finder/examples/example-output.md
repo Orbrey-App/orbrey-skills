@@ -98,4 +98,4 @@
 - Decide on the violin/netball move for Maya (Critical 1)
 - Confirm Friday pickup reassignment with Jordan (Critical 2)
 - Re-run after `calendar.sync_import` if you make any edits
-- Run `/orbrey-ai:family-week-planner` once conflicts are resolved
+- Run `/orbrey:family-week-planner` once conflicts are resolved

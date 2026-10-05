@@ -37,7 +37,7 @@ Without scheduling, this is a manual command the household admin runs as part of
 
 After the digest renders, suggest the most actionable follow-up based on its findings:
 
-- If Critical findings on calendar → `/orbrey-ai:calendar-conflict-finder`
+- If Critical findings on calendar → `/orbrey:calendar-conflict-finder`
 - If Critical findings on tasks → `/chore-fairness`
 - If grocery is stale → `/grocery-tidy`
 - Otherwise → "Have a good Monday."

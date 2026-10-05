@@ -1,7 +1,8 @@
 interface:
   display_name: "Grocery Organizer"
   short_description: "Review and tidy the household grocery list"
-dependencies:
+  icon_small: "./assets/orbrey-logo-light-mark-only-1.svg"
+  icon_large: "./assets/orbrey-logo-light-mark-only-1.svg"
   tools:
     - type: "mcp"
       value: "orbrey"

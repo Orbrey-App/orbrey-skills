@@ -107,7 +107,7 @@ const maxTotal = Number(config.max_total_aud);
 if (!Number.isFinite(maxTotal) || maxTotal <= 0) {
   fail(
     EXIT.PRECONDITION,
-    'config.max_total_aud is missing or invalid — re-run `/orbrey-ai:kitchen-concierge setup`'
+    'config.max_total_aud is missing or invalid — re-run `/orbrey:kitchen-concierge setup`'
   );
 }
 
@@ -277,7 +277,7 @@ if (scrapedTotal > maxTotal) {
   fail(
     EXIT.TOTAL,
     `cart total $${scrapedTotal.toFixed(2)} exceeds your ceiling of $${maxTotal.toFixed(2)} AUD`,
-    'Remove items, or raise the ceiling via /orbrey-ai:kitchen-concierge setup.\n' +
+    'Remove items, or raise the ceiling via /orbrey:kitchen-concierge setup.\n' +
       'Do not work around this by splitting the order.'
   );
 }

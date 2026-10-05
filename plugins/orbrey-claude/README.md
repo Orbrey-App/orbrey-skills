@@ -1,6 +1,6 @@
-# Orbrey Plugin for Claude Code
+# Orbrey
 
-Orbrey connects Claude Code to the household selected during Orbrey authorisation. Its 12 skills, 3 agents, and 6 commands help with meal planning, household tasks and routines, shared groceries, recipes, calendars, pantry inventory, and rewards. It uses the hosted Orbrey MCP server and only the household and scopes authorised for that connection.
+Orbrey connects Claude Code to the household selected during Orbrey authorisation. Its 11 skills, 3 agents, and 7 commands help with meal planning, household tasks and routines, shared groceries, recipes, calendars, and pantry inventory. It uses the hosted Orbrey MCP server and only the household and scopes authorised for that connection.
 
 The separate ChatGPT package is [`../orbrey-openai`](../orbrey-openai). It shares the hosted MCP server and portable skills, but excludes Claude Code commands, agents, hooks, and Chrome-based grocery ordering.
 
@@ -14,7 +14,6 @@ The separate ChatGPT package is [`../orbrey-openai`](../orbrey-openai). It share
 | `routine-builder` | Create supported recurring task occurrences. Orbrey recurrence uses dates and day-part buckets; it does not store exact times or task dependencies. |
 | `calendar-conflict-finder` | Review returned calendar events for overlapping dates and times; do not infer travel time or events outside the connected scope. |
 | `family-week-planner` | Assemble a week view from available meal, task, and calendar data, noting missing sources. |
-| `reward-strategist` | Explain reward options and returned wallet balances in Orbrey gems; wallet adjustments need explicit confirmation and may be plan-gated. |
 | `pantry-to-recipe` | Match saved recipes to returned pantry inventory and show the ingredient gaps. |
 | `household-onboarder` | Guide a user through checking household setup and explain which steps must be completed in the Orbrey app; it cannot create members or change permissions. |
 | `recurring-task-author` | Translate a request into the supported recurrence fields and confirm before creating tasks; unsupported exceptions and exact times are not represented. |
@@ -34,7 +33,7 @@ The separate ChatGPT package is [`../orbrey-openai`](../orbrey-openai). It share
 | Command | Purpose |
 |---|---|
 | `/plan-week` | Start a seven-day meal-planning workflow. |
-| `/orbrey-ai:kitchen-concierge` | Run its setup, planning, approval, or status flow. It is Claude Code-only. |
+| `/orbrey:kitchen-concierge` | Run its setup, planning, approval, or status flow. It is Claude Code-only. |
 | `/grocery-tidy` | Review and organise the current shared grocery list. |
 | `/chore-fairness` | Summarise returned task distribution and suggest possible changes. |
 | `/family-digest` | Request a household summary from available tools. |
@@ -45,7 +44,7 @@ The separate ChatGPT package is [`../orbrey-openai`](../orbrey-openai). It share
 
 ```text
 /plugin marketplace add Orbrey-App/orbrey-skills
-/plugin install orbrey-ai@orbrey-ai-marketplace
+/plugin install orbrey@orbrey-ai-marketplace
 ```
 
 The bundled MCP server is `https://mcp.orbrey.com/`. On first use, run `/mcp` and complete Claude Code's OAuth flow. Claude Code keeps its authorisation separate from Claude.ai.
@@ -54,9 +53,9 @@ Each connection is authorised for one household. Re-authorise to change househol
 
 ## Tool and data boundaries
 
-Tool access is filtered by the current connection's granted scopes. Use returned records and tool descriptions as the source of truth. `household_id` is optional for many tools; supplying a different household ID does not switch the authorisation. Some meal-planning, pantry, and rewards tools may require Orbrey Plus.
+The available tool list is filtered by the current connection's granted scopes. Use returned records and tool descriptions as the source of truth. `household_id` is optional for many tools; supplying a different household ID does not switch the authorisation. Some meal-planning and pantry tools may require Orbrey Plus.
 
-Rewards are denominated in gems. Task completion applies the configured task reward automatically; wallet adjustments are separate, consequential actions and require explicit user confirmation. Grocery and shared-list tools update Orbrey records only; they do not search retailers or purchase goods.
+Task completion behavior is managed by Orbrey. Grocery and shared-list tools update Orbrey records only; they do not search retailers or purchase goods.
 
 The browser fetches the CDN assets named in each generated artifact. If an artifact uses a public API, its code can send request data to that API; review the dependencies and code before using sensitive data.
 

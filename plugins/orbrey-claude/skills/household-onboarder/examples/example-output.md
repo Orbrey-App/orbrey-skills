@@ -43,8 +43,6 @@
 | recipes:write | no | parent-only |
 | grocery:read | yes | |
 | grocery:write | no | |
-| rewards:read | yes | sees own balance |
-| rewards:write | no | admin-only adjusts |
 
 Confirmed by: Sam on 05/05/2026.
 
@@ -58,20 +56,12 @@ Confirmed by: Sam on 05/05/2026.
 
 ---
 
-## Reward Wallet
-
-- **Wallet created:** yes
-- **Starting balance:** $0
-- **Weekly allowance:** $3 (base) + chore credits
-- **Allowance source:** hybrid (per `reward-strategist` design from 05/05)
-
 ---
 
 ## Next Actions
 
-- [ ] Re-run `/orbrey-ai:chore-rotator` so Eli is included next rotation cycle (currently active rotation does not include him)
-- [ ] Run `/orbrey-ai:routine-builder` for Eli's bedtime routine (morning routine already built today)
-- [ ] First reward credit: Sam to mark Friday "feed dog" complete via app — he should see $1 land
+- [ ] Re-run `/orbrey:chore-rotator` so Eli is included next rotation cycle (currently active rotation does not include him)
+- [ ] Run `/orbrey:routine-builder` for Eli's bedtime routine (morning routine already built today)
 
 ---
 

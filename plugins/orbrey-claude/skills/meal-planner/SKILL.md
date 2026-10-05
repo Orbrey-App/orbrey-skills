@@ -4,10 +4,10 @@ description: Build a 7/14/28-day meal plan from the household recipe library, re
 argument-hint: [duration-and-constraints]
 allowed-tools: >
   Read AskUserQuestion
-  mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__calendar_list mcp__plugin_orbrey-ai_orbrey__members_list
-  mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__grocery_add_item
-  mcp__plugin_orbrey-ai_orbrey__pantry_list mcp__plugin_orbrey-ai_orbrey__meal_plan_week
-  mcp__plugin_orbrey-ai_orbrey__meal_plan_add_meals mcp__plugin_orbrey-ai_orbrey__meal_plan_sync_to_grocery
+  mcp__plugin_orbrey_orbrey__recipes_list mcp__plugin_orbrey_orbrey__calendar_list mcp__plugin_orbrey_orbrey__members_list
+  mcp__plugin_orbrey_orbrey__grocery_list mcp__plugin_orbrey_orbrey__grocery_add_items
+  mcp__plugin_orbrey_orbrey__pantry_list mcp__plugin_orbrey_orbrey__meal_plan_week
+  mcp__plugin_orbrey_orbrey__meal_plan_add_meals mcp__plugin_orbrey_orbrey__meal_plan_sync_to_grocery
 effort: high
 ---
 
@@ -136,7 +136,7 @@ End with:
 
 - The plan draft in the conversation and whether it was saved
 - The grocery delta summary
-- Suggested next actions: `/orbrey-ai:grocery-organizer` to tidy the list, `/orbrey-ai:family-week-planner` to merge with chores/calendar.
+- Suggested next actions: `/orbrey:grocery-organizer` to tidy the list, `/orbrey:family-week-planner` to merge with chores/calendar.
 
 ---
 
@@ -159,4 +159,4 @@ End with:
 3. **Member is away the entire window** (e.g. parent travel) → Reduce servings, surface that some recipes (made for a family of 5) now over-cater for 4. Halve where the recipe permits, or suggest leftover-friendly picks.
 4. **All members are vegetarian** but library is meat-heavy → Don't pad with two-ingredient pasta. Stop and suggest seeding the library first.
 5. **User asks for a 28-day plan** with a thin library → Push back. 28 days × non-repeat = 28 unique recipes minimum. If they have 12, that's a repeat plan; be explicit.
-6. **Grocery list already has 50+ items** → Run `/orbrey-ai:grocery-organizer` first; don't pile onto an unsorted list.
+6. **Grocery list already has 50+ items** → Run `/orbrey:grocery-organizer` first; don't pile onto an unsorted list.

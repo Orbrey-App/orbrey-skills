@@ -77,6 +77,6 @@ Items skipped (already present):
 
 ## Next Actions
 
-- Run `/orbrey-ai:grocery-organizer` to dedupe + aisle-order the list
-- Run `/orbrey-ai:family-week-planner` to combine this plan with chores and calendar
-- Run `/orbrey-ai:recipe-from-url <url>` to seed missing dietary categories
+- Run `/orbrey:grocery-organizer` to dedupe + aisle-order the list
+- Run `/orbrey:family-week-planner` to combine this plan with chores and calendar
+- Run `/orbrey:recipe-from-url <url>` to seed missing dietary categories

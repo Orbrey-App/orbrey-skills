@@ -2,7 +2,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "mcp__.*__(recipes_delete|lists_delete|tasks_delete_occurrence|grocery_merge)$",
+        "matcher": "mcp__.*__(recipes_delete_items|lists_delete_lists|tasks_delete_items|tasks_delete_occurrences|calendar_delete_events|grocery_delete_items|grocery_delete_lists|pantry_delete_items|grocery_merge|pantry_merge)$",
         "hooks": [
           {
             "type": "command",

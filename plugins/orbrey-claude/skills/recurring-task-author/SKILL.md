@@ -2,7 +2,7 @@
 name: recurring-task-author
 description: Turn a natural-language task schedule into Orbrey's supported recurrence fields and create it after approval.
 argument-hint: [natural-language-schedule]
-allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__tasks_create mcp__plugin_orbrey-ai_orbrey__tasks_list
+allowed-tools: Read mcp__plugin_orbrey_orbrey__members_list mcp__plugin_orbrey_orbrey__tasks_create mcp__plugin_orbrey_orbrey__tasks_list
 effort: medium
 ---
 
@@ -34,4 +34,4 @@ Do not claim support for a recurrence count, exception dates, school-holiday cal
 4. If the user asks to inspect the created schedule, call tasks_list for the relevant bounded date window (at most 93 days) and report only returned occurrences.
 5. Report the actual create result. A failed call is not a created task.
 
-Skipping a single occurrence is a separate consequential action: explain that tasks_delete_occurrence permanently removes that occurrence and cannot be restored, then call it only after explicit confirmation with the returned occurrence ID and confirm=true. Do not use tasks_set_status with status=skipped; its accepted values are completed and open.
+Skipping one or more occurrences is a separate consequential action: explain that tasks_delete_occurrences permanently removes those occurrences and cannot be restored, then call it only after explicit confirmation with returned IDs in occurrence_ids and confirm=true. Do not use tasks_set_status with status=skipped; its accepted values are completed and open.

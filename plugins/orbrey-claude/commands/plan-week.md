@@ -14,7 +14,7 @@ You are running the `meal-planner` skill with sensible defaults so the user gets
 - **Start date:** the next Monday from today
 - **Meals per day:** dinner only
 - **Effort budget:** Low–Medium with one Saturday Leisure slot reserved for higher-effort
-- **Diners:** use the user's supplied household size; do not infer it from a paid rewards tool
+- **Diners:** use the user's supplied household size; do not infer it from unrelated household data
 - **Dietary constraints:** read `members_list` when the authorised `profile:read` scope is available. The tool does not expose severity tiers or aliases; state uncertainty and do not claim allergy safety
 - **Grocery sync:** optional — show the missing items and ask separately before using the confirmation-gated sync tool
 
@@ -37,4 +37,4 @@ After the plan is rendered, recommend:
 
 - `/grocery-tidy` — dedupe and aisle-order the updated grocery list
 - `/family-digest` — Sunday-evening curated audit
-- `/orbrey-ai:family-week-planner` — produce the printable fridge schedule once the chore rotation is in place
+- `/orbrey:family-week-planner` — produce the printable fridge schedule once the chore rotation is in place

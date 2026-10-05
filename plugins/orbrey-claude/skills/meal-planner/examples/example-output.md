@@ -88,5 +88,5 @@ Items skipped (already present):
 
 ## Next Actions
 
-- Run `/orbrey-ai:grocery-organizer` to dedupe + aisle-order the list
-- Run `/orbrey-ai:family-week-planner` to combine with chores and calendar
+- Run `/orbrey:grocery-organizer` to dedupe + aisle-order the list
+- Run `/orbrey:family-week-planner` to combine with chores and calendar

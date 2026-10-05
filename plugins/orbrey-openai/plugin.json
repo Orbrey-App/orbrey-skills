@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "orbrey-openai",
-  "version": "0.1.1",
-  "description": "Plan and organise household tasks, calendars, meals, groceries, pantry, routines and rewards with Orbrey.",
+  "name": "orbrey",
+  "version": "0.1.3",
+  "description": "Plan and organise household tasks, calendars, meals, groceries, pantry, and routines with Orbrey.",
   "author": {
     "name": "Orbrey",
     "url": "https://orbrey.com"
@@ -21,7 +21,7 @@
       "interface": {
         "displayName": "Orbrey",
         "shortDescription": "Household planning & routines",
-        "longDescription": "Open Orbrey to review today's household agenda, plan meals from saved recipes, manage tasks and routines, organise grocery and pantry lists, review calendars, and manage household rewards. Save recipes from content provided in chat. Every Orbrey MCP connection checks that all memberships in the authorised household are classified as adult accounts with adult or admin roles before household tools return or change data; child, guest, local-only, unknown, or unreadable classifications are blocked. Orbrey reads and updates only data authorised for the connected household. Grocery tools manage household records; they do not search retailers, place orders, or process payments.",
+        "longDescription": "Open Orbrey to review today's household agenda, plan meals from saved recipes, manage tasks and routines, organise grocery and pantry lists, and review calendars. Save recipes from content provided in chat. Every Orbrey connection checks that all memberships in the authorised household are classified as adult accounts with adult or admin roles before household tools return or change data; child, guest, local-only, unknown, or unreadable classifications are blocked. Orbrey reads and updates only data authorised for the connected household. Grocery tools manage household records; they do not search retailers, place orders, or process payments.",
         "developerName": "Orbrey",
         "category": "Productivity",
         "capabilities": [
@@ -30,8 +30,7 @@
           "Review task history and household schedules",
           "View and update the household calendar",
           "Organise shared lists, groceries, and pantry stock",
-          "Plan meals using saved recipes and add recipes provided in chat",
-          "Manage household rewards"
+          "Plan meals using saved recipes and add recipes provided in chat"
         ],
         "websiteURL": "https://orbrey.com/orbrey-ai",
         "supportURL": "https://orbrey.com/help",
@@ -42,10 +41,10 @@
           "Help plan dinners around our calendar and saved recipes.",
           "Add milk and oats to our shared grocery list."
         ],
-        "composerIcon": "./assets/orbrey-light.png",
-        "composerIconDark": "./assets/orbrey-dark.png",
-        "logo": "./assets/orbrey-light.png",
-        "logoDark": "./assets/orbrey-dark.png"
+        "composerIcon": "./assets/orbrey-logo-light-mark-only-1.svg",
+        "composerIconDark": "./assets/orbrey-logo-light-mark-only-1.svg",
+        "logo": "./assets/orbrey-logo-light-mark-only-1.svg",
+        "logoDark": "./assets/orbrey-logo-light-mark-only-1.svg"
       },
       "onboardingSkill": "./skills/getting-started/SKILL.md",
       "review": {
@@ -78,8 +77,8 @@
             {
               "description": "Add a specifically requested item to the default household grocery list.",
               "prompt": "Add oats to our shared grocery list.",
-              "tools_triggered": "grocery_add_item",
-              "expected_behavior": "Call grocery_add_item with name=\"oats\" and omit list_id so the server uses the household's first grocery list. Report the returned result. This only updates the list; do not place an order or claim a purchase was made."
+              "tools_triggered": "grocery_add_items",
+              "expected_behavior": "Call grocery_add_items with items=[{name:\"oats\"}] and omit list_id so the server uses the household's first grocery list. Report the returned result. This only updates the list; do not place an order or claim a purchase was made."
             }
           ],
           "negative": [
@@ -113,7 +112,7 @@
           "CA",
           "IE"
         ],
-        "release_notes": "Orbrey home screen, household workflows, and the hosted Orbrey MCP connection. Grocery tools manage lists only; no purchases are made in ChatGPT."
+        "release_notes": "Refreshes Orbrey Home with brand styling, removes rewards tools, and consolidates item edits and deletes into batch actions across household workflows."
       }
     }
   }

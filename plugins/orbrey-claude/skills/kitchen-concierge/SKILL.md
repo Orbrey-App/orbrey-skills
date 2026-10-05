@@ -6,14 +6,14 @@ description: >
   place a grocery order at Woolworths or Coles for your approval. Subcommands:
   setup, run, approve, status. Use for recurring set-and-forget automation that
   includes ordering. For a one-off meal plan with no ordering and no schedule,
-  use orbrey-ai:meal-planner instead.
+  use orbrey:meal-planner instead.
 argument-hint: "[setup | run | approve | status]"
 allowed-tools: >
-  Edit(~/.claude/plugins/data/orbrey-ai/**) AskUserQuestion
-  Skill(orbrey-ai:meal-planner) Skill(orbrey-ai:grocery-organizer)
-  mcp__plugin_orbrey-ai_orbrey__members_list mcp__plugin_orbrey-ai_orbrey__pantry_list
-  mcp__plugin_orbrey-ai_orbrey__grocery_list mcp__plugin_orbrey-ai_orbrey__grocery_add_item
-  mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__recipes_create
+  Edit(~/.claude/plugins/data/orbrey/**) AskUserQuestion
+  Skill(orbrey:meal-planner) Skill(orbrey:grocery-organizer)
+  mcp__plugin_orbrey_orbrey__members_list mcp__plugin_orbrey_orbrey__pantry_list
+  mcp__plugin_orbrey_orbrey__grocery_list mcp__plugin_orbrey_orbrey__grocery_add_items
+  mcp__plugin_orbrey_orbrey__recipes_list mcp__plugin_orbrey_orbrey__recipes_create
   mcp__scheduled-tasks__create_scheduled_task
   mcp__scheduled-tasks__list_scheduled_tasks
 effort: high
@@ -39,8 +39,8 @@ You orchestrate the household food cycle so the user only has to cook:
 
 You are an **orchestrator, not a re-implementer**. Call these via the `Skill` tool and do not duplicate their logic:
 
-- `orbrey-ai:meal-planner` — builds the plan against calendar, pantry and dietary contract
-- `orbrey-ai:grocery-organizer` — dedupes, categorises, aisle-orders the list
+- `orbrey:meal-planner` — builds the plan against calendar, pantry and dietary contract
+- `orbrey:grocery-organizer` — dedupes, categorises, aisle-orders the list
 
 What you add: scheduled execution, a browser-driven order at the retailer, hard safety gates, and an append-only run log.
 
@@ -108,7 +108,7 @@ Read `reference.md` §2 for the full panel text. Six `AskUserQuestion` panels pl
 
 Write answers to `${CLAUDE_PLUGIN_DATA}/config.json`. Then register the routine with `mcp__scheduled-tasks__create_scheduled_task`:
 - `cronExpression` from S4 — see `reference.md` §4 for the cron cookbook, and note that **cron cannot express "fortnightly"**: use a weekly expression and have Phase 3.0 exit early on off-weeks.
-- `prompt` = `/orbrey-ai:kitchen-concierge run`
+- `prompt` = `/orbrey:kitchen-concierge run`
 - `notifyOnCompletion` = true
 
 Confirm by calling `mcp__scheduled-tasks__list_scheduled_tasks` and showing the new entry.
@@ -130,7 +130,7 @@ Read `${CLAUDE_PLUGIN_DATA}/config.json` and call `mcp__scheduled-tasks__list_sc
 - Last run timestamp + outcome (newest file in `${CLAUDE_PLUGIN_DATA}/runs/`)
 - Whether a deferred order is awaiting approval
 
-No mutations. Close with: "To run now: `/orbrey-ai:kitchen-concierge run`. To reconfigure: `setup`."
+No mutations. Close with: "To run now: `/orbrey:kitchen-concierge run`. To reconfigure: `setup`."
 
 ---
 
@@ -157,7 +157,7 @@ If the cadence is fortnightly and this is an off-week, log a skip and exit.
 This is a hard precondition for ordering. If the local profile is missing, invalid, incomplete, stale under the rule above, or does not match the returned member IDs, abort before 3.2 and log a partial run. Never infer an allergy restriction or safety from missing data.
 ### 3.2 Plan meals
 
-Invoke `Skill(skill="orbrey-ai:meal-planner", args="<period> | dietary contract: <serialised contract>")`.
+Invoke `Skill(skill="orbrey:meal-planner", args="<period> | dietary contract: <serialised contract>")`.
 
 **Pass the contract explicitly.** The sub-skill cannot see your context.
 
@@ -171,8 +171,8 @@ For each planned recipe, compare returned recipe ingredients with returned pantr
 ### 3.4 Shopping list
 
 1. `grocery_list` first — check what is already there.
-2. `grocery_add_item` for each genuinely missing item (idempotent; skip duplicates).
-3. `Skill(skill="orbrey-ai:grocery-organizer")` to dedupe, categorise, aisle-order.
+2. Call `grocery_add_items` once with all genuinely missing items in its `items` array (idempotent; skip duplicates).
+3. `Skill(skill="orbrey:grocery-organizer")` to dedupe, categorise, aisle-order.
 4. Re-read `grocery_list` for the final state.
 
 ### 3.5 Present the brief
@@ -181,7 +181,7 @@ Compose the brief per templates/output-template.md: meals planned, pantry status
 
 Show the brief in the current session. The Orbrey MCP has no household messaging tool; do not add the brief to a shared list or claim a household member was notified.
 
-**Unattended runs stop here.** Write the cart to `${CLAUDE_PLUGIN_DATA}/pending-cart.json`, log `deferred-awaiting-approval`, and tell the user to run `/orbrey-ai:kitchen-concierge approve` when they are next at the keyboard.
+**Unattended runs stop here.** Write the cart to `${CLAUDE_PLUGIN_DATA}/pending-cart.json`, log `deferred-awaiting-approval`, and tell the user to run `/orbrey:kitchen-concierge approve` when they are next at the keyboard.
 
 **Interactive runs** ask R1:
 

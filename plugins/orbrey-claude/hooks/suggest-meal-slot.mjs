@@ -42,6 +42,6 @@ process.stdout.write(
     systemMessage:
       `Recipe "${label}" added to your library. Suggested next steps:\n` +
       `  - /plan-week — generate next week's plan with this recipe in scope\n` +
-      `  - /orbrey-ai:pantry-to-recipe — see if you can cook "${label}" tonight from current pantry stock`,
+      `  - /orbrey:pantry-to-recipe — see if you can cook "${label}" tonight from current pantry stock`,
   })
 );

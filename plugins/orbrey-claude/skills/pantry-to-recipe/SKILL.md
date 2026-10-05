@@ -2,7 +2,7 @@
 name: pantry-to-recipe
 description: Suggest recipes the household can cook with what's already in the pantry — minimising new grocery purchases. Bridges the pantry inventory to the meal-plan loop.
 argument-hint: [meal-type-or-constraints]
-allowed-tools: Read mcp__plugin_orbrey-ai_orbrey__recipes_list mcp__plugin_orbrey-ai_orbrey__pantry_list
+allowed-tools: Read mcp__plugin_orbrey_orbrey__recipes_list mcp__plugin_orbrey_orbrey__pantry_list
 effort: medium
 ---
 
@@ -45,7 +45,7 @@ Required input:
 ## Phase 2: Pull Data
 
 1. **`orbrey:recipes_list`** — full library, limit 200.
-2. mcp__plugin_orbrey-ai_orbrey__pantry_list — read the available pantry inventory.
+2. mcp__plugin_orbrey_orbrey__pantry_list — read the available pantry inventory.
 
 If no pantry list exists, ask the user to type in what's on hand right now (basic items + any specifics they want to use up).
 

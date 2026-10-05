@@ -1,7 +1,8 @@
 interface:
   display_name: "Next Up"
   short_description: "Show upcoming household tasks and events"
-dependencies:
+  icon_small: "./assets/orbrey-logo-light-mark-only-1.svg"
+  icon_large: "./assets/orbrey-logo-light-mark-only-1.svg"
   tools:
     - type: "mcp"
       value: "orbrey"

@@ -1,7 +1,8 @@
 interface:
   display_name: "Chore Fairness"
   short_description: "Review returned household task history"
-dependencies:
+  icon_small: "./assets/orbrey-logo-light-mark-only-1.svg"
+  icon_large: "./assets/orbrey-logo-light-mark-only-1.svg"
   tools:
     - type: "mcp"
       value: "orbrey"

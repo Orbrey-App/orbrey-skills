@@ -10,7 +10,7 @@
 - [ ] Role and permissions reviewed in the Orbrey app
 - [ ] External calendar connection completed in the Orbrey app, if needed
 - [ ] Current member roster verified with members_list
-- [ ] Requested calendar, tasks, or rewards details read back from available tools
+- [ ] Requested calendar or task details read back from available tools
 
 ## What this connection can confirm
 

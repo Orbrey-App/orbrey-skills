@@ -1,8 +1,8 @@
 {
-  "name": "orbrey-ai",
+  "name": "orbrey",
   "displayName": "Orbrey",
-  "version": "0.3.1",
-  "description": "Household planning skills, agents, and commands for Orbrey — meal planning, grocery lists, chores, routines, calendar coordination, and rewards. Includes an optional Claude-only browser workflow for preparing grocery orders; it is not included in the ChatGPT package. Connects to Orbrey's hosted MCP server using Claude Code OAuth.",
+  "version": "0.3.3",
+  "description": "Household planning skills, agents, and commands for Orbrey — meal planning, grocery lists, chores, routines, and calendar coordination. Includes an optional Claude-only browser workflow for preparing grocery orders; it is not included in the ChatGPT package. Connects to Orbrey's hosted MCP server using Claude Code OAuth.",
   "keywords": [
     "household",
     "family planning",
@@ -14,7 +14,7 @@
     "recipes",
     "pantry"
   ],
-  "icon": "./icon.png",
+  "icon": "./icon.svg",
   "privacyPolicyUrl": "https://orbrey.com/privacy-policy",
   "author": {
     "name": "Orbrey",
