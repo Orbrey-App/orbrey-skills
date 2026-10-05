@@ -29,22 +29,29 @@ try {
 }
 
 const toolName = input.tool_name ?? '';
-if (!toolName.startsWith('mcp__plugin_orbrey-ai_orbrey__')) process.exit(0);
+const toolSuffix = toolName.slice(toolName.lastIndexOf('__') + 2);
+const handledTools = new Set([
+  'recipes_delete',
+  'lists_delete',
+  'tasks_delete_occurrence',
+  'grocery_merge',
+]);
+if (!handledTools.has(toolSuffix)) process.exit(0);
 
 const args = input.tool_input ?? {};
 const household = args.household_id ?? '<unknown>';
 
 function summarise() {
-  if (toolName.includes('recipes_delete')) {
+  if (toolSuffix === 'recipes_delete') {
     return `About to ARCHIVE+DELETE recipe ${args.recipe_id ?? '<missing>'} from household ${household}. This removes it from active lists; the row is permanently archived.`;
   }
-  if (toolName.includes('lists_delete')) {
+  if (toolSuffix === 'lists_delete') {
     return `About to PERMANENTLY DELETE shared list ${args.list_id ?? '<missing>'} from household ${household}. This cannot be undone.`;
   }
-  if (toolName.includes('tasks_delete_occurrence')) {
+  if (toolSuffix === 'tasks_delete_occurrence') {
     return `About to DELETE task occurrence ${args.occurrence_id ?? '<missing>'} from household ${household}. This removes a single instance — the recurring rule is unaffected.`;
   }
-  if (toolName.includes('grocery_merge')) {
+  if (toolSuffix === 'grocery_merge') {
     return `About to MERGE grocery item ${args.source_item_id ?? '<missing>'} into ${args.target_item_id ?? '<missing>'} (household ${household}). Source row will be removed; target keeps the combined quantity.`;
   }
   if (toolName.includes('rewards_adjust')) {

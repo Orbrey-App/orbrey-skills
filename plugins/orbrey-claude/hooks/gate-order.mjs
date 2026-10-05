@@ -3,7 +3,7 @@
  * gate-order.mjs — PreToolUse gate on the grocery checkout action.
  *
  * ============================================================================
- * THIS HOOK RETURNS "ask", NEVER "allow". DO NOT "OPTIMISE" THAT AWAY.
+ * THIS HOOK RETURNS ONLY "ask" OR "deny". DO NOT "OPTIMISE" THAT AWAY.
  * ============================================================================
  *
  * The approval marker this hook checks is a file the agent itself can write.
@@ -50,9 +50,9 @@ function decide(permissionDecision, reason) {
   process.exit(0);
 }
 
-/** Stand aside — this call is none of our business. */
-function passThrough() {
-  process.exit(0);
+/** Ask for a user decision even when no kitchen order session is active. */
+function askForClick(reason) {
+  decide('ask', reason);
 }
 
 async function readStdin() {
@@ -68,7 +68,8 @@ try {
   input = JSON.parse(raw);
 } catch {
   // We could not read the hook payload. If an order session is active we cannot
-  // tell whether this is the checkout click, so we deny.
+  // tell whether this is the checkout click, so we deny. Without a session,
+  // still ask before letting the browser click proceed.
   if (existsSync(paths.orderSession())) {
     decide(
       'deny',
@@ -76,17 +77,24 @@ try {
         'Denying rather than guessing. Re-run the order step.'
     );
   }
-  passThrough();
+  askForClick(
+    'The order gate could not read this browser click. Confirm the click in the permission prompt; this does not authorise a purchase.'
+  );
 }
 
 // ---------------------------------------------------------------------------
 // Is a kitchen-concierge ordering run in progress?
 //
-// Outside one, the user is just browsing and every claude-in-chrome call is
-// their own business. We only gate inside a session we started.
+// The directory policy scan treats a pass-through as a grant. This hook must
+// therefore ask or deny on every matched Chrome click, including clicks outside
+// an order session. The prompt makes clear that it does not authorise payment.
 // ---------------------------------------------------------------------------
 
-if (!existsSync(paths.orderSession())) passThrough();
+if (!existsSync(paths.orderSession())) {
+  askForClick(
+    'No Kitchen Concierge order session is active. Confirm this browser click in the permission prompt; this does not authorise a purchase.'
+  );
+}
 
 let session;
 try {
@@ -102,8 +110,8 @@ try {
 // ---------------------------------------------------------------------------
 // State machine.
 //
-//   building  — agent is adding items to the cart. Browser actions pass, but a
-//               checkout-looking action is denied: verify_cart.mjs has not run.
+//   building  — cart preparation is in progress. Every browser click asks; a
+//               checkout-looking action is denied until verify_cart.mjs passes.
 //   verified  — verify_cart.mjs has passed. The NEXT interaction is the
 //               checkout click, so it gets "ask" with the real total.
 //
@@ -136,7 +144,9 @@ if (session.state === 'building') {
         'without it.'
     );
   }
-  passThrough();
+  askForClick(
+    'Kitchen Concierge is preparing the cart. Confirm this browser interaction; this approval is not checkout consent.'
+  );
 }
 
 if (session.state !== 'verified') {

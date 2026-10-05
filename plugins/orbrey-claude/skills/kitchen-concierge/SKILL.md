@@ -79,6 +79,8 @@ Error: unknown-subcommand "<value>". Valid: setup | run | approve | status. Empt
 
 Check whether `mcp__claude-in-chrome__click` is available.
 
+The order safety hook asks for approval before every matching browser click, including clicks used to prepare the cart. Approving a cart-preparation click is not permission to place the order; checkout still requires a fresh verification and a separate human decision.
+
 If they are absent, **halt** with:
 
 > kitchen-concierge orders groceries through your own Chrome session. Restart Claude Code with `claude --chrome` (needs the Claude in Chrome extension v1.0.36+ and a direct Anthropic plan — Pro/Max/Team/Enterprise). Not supported on WSL, Bedrock, Vertex or Foundry.

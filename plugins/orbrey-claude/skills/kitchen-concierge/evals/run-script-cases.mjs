@@ -162,14 +162,14 @@ console.log('\nCheckout gate');
 
 reset();
 r = runGate(CLICK);
-check('hook-1-no-session-passes-through', r.code === 0 && !r.stdout.trim(), `exit=${r.code} stdout=${r.stdout.slice(0, 60)}`);
+check('hook-1-no-session-asks', decisionOf(r.stdout) === 'ask', `decision=${decisionOf(r.stdout)}`);
 
 writeFileSync(join(DATA, 'order-session.json'), JSON.stringify({ state: 'building' }));
 r = runGate(CLICK);
 check('hook-2-building-denies-checkout', decisionOf(r.stdout) === 'deny', `decision=${decisionOf(r.stdout)}`);
 
 r = runGate({ tool_name: 'mcp__claude-in-chrome__click', tool_input: { text: 'Add to cart' } });
-check('hook-3-building-allows-normal-clicks', r.code === 0 && !r.stdout.trim(), `stdout=${r.stdout.slice(0, 60)}`);
+check('hook-3-building-asks-normal-clicks', decisionOf(r.stdout) === 'ask', `decision=${decisionOf(r.stdout)}`);
 
 writeFileSync(join(DATA, 'order-session.json'), JSON.stringify({ state: 'verified' }));
 r = runGate(CLICK);
