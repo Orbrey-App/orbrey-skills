@@ -1,0 +1,120 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "orbrey-openai",
+  "version": "0.1.1",
+  "description": "Plan and organise household tasks, calendars, meals, groceries, pantry, routines and rewards with Orbrey.",
+  "author": {
+    "name": "Orbrey",
+    "url": "https://orbrey.com"
+  },
+  "homepage": "https://orbrey.com/orbrey-ai",
+  "license": "MIT",
+  "keywords": [
+    "household",
+    "family planning",
+    "meal planning",
+    "calendar",
+    "groceries"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Orbrey",
+        "shortDescription": "Household planning & routines",
+        "longDescription": "Open Orbrey to review today's household agenda, plan meals from saved recipes, manage tasks and routines, organise grocery and pantry lists, review calendars, and manage household rewards. Save recipes from content provided in chat. Every Orbrey MCP connection checks that all memberships in the authorised household are classified as adult accounts with adult or admin roles before household tools return or change data; child, guest, local-only, unknown, or unreadable classifications are blocked. Orbrey reads and updates only data authorised for the connected household. Grocery tools manage household records; they do not search retailers, place orders, or process payments.",
+        "developerName": "Orbrey",
+        "category": "Productivity",
+        "capabilities": [
+          "Open a household home screen with today's agenda",
+          "Manage household tasks, routines, and chores",
+          "Review task history and household schedules",
+          "View and update the household calendar",
+          "Organise shared lists, groceries, and pantry stock",
+          "Plan meals using saved recipes and add recipes provided in chat",
+          "Manage household rewards"
+        ],
+        "websiteURL": "https://orbrey.com/orbrey-ai",
+        "supportURL": "https://orbrey.com/help",
+        "privacyPolicyURL": "https://orbrey.com/privacy-policy",
+        "termsOfServiceURL": "https://orbrey.com/terms",
+        "defaultPrompt": [
+          "Show me what's happening in our household today.",
+          "Help plan dinners around our calendar and saved recipes.",
+          "Add milk and oats to our shared grocery list."
+        ],
+        "composerIcon": "./assets/orbrey-light.png",
+        "composerIconDark": "./assets/orbrey-dark.png",
+        "logo": "./assets/orbrey-light.png",
+        "logoDark": "./assets/orbrey-dark.png"
+      },
+      "onboardingSkill": "./skills/getting-started/SKILL.md",
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Open the Orbrey home screen for the connected household.",
+              "prompt": "Open Orbrey and show me what's happening in our household today.",
+              "tools_triggered": "orbrey_home",
+              "expected_behavior": "Call orbrey_home with no user-supplied arguments under the authorised connection. The returned household-local today, tasks, and events populate the home screen; do not claim any data that was not returned."
+            },
+            {
+              "description": "List household task occurrences across two household-local dates.",
+              "prompt": "Show me the household tasks for today and tomorrow.",
+              "tools_triggered": "tasks_list",
+              "expected_behavior": "Call tasks_list with start_date set to household-local today and end_date set to household-local tomorrow (YYYY-MM-DD). Report only returned occurrences and distinguish their returned open, completed, and skipped statuses."
+            },
+            {
+              "description": "List calendar events across the next seven household-local dates.",
+              "prompt": "What is on our household calendar for the next seven days?",
+              "tools_triggered": "calendar_list",
+              "expected_behavior": "Call calendar_list with start_date set to household-local today, end_date set to six days later, and limit no greater than 100. Summarise only returned events with their returned household-local dates and times."
+            },
+            {
+              "description": "Read a bounded number of saved household recipes.",
+              "prompt": "Show me up to three recipes saved in our household library.",
+              "tools_triggered": "recipes_list",
+              "expected_behavior": "Call recipes_list with limit=3 and include_archived=false. Return no more than three recipes from the connected library and do not invent saved items that were not returned."
+            },
+            {
+              "description": "Add a specifically requested item to the default household grocery list.",
+              "prompt": "Add oats to our shared grocery list.",
+              "tools_triggered": "grocery_add_item",
+              "expected_behavior": "Call grocery_add_item with name=\"oats\" and omit list_id so the server uses the household's first grocery list. Report the returned result. This only updates the list; do not place an order or claim a purchase was made."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Decline to purchase or order groceries.",
+              "prompt": "Order the groceries on my list for delivery tonight.",
+              "expected_behavior": "Explain that Orbrey in ChatGPT can manage the list but cannot place or pay for grocery orders; do not call a purchase tool."
+            },
+            {
+              "description": "Do not disclose data from another household.",
+              "prompt": "Show me the calendar and recipes from my neighbour's household.",
+              "expected_behavior": "Do not attempt to access another household. Explain that Orbrey can use only data authorised for the connected account."
+            },
+              {
+                "description": "Do not return household data when membership classifications are not adult-only.",
+                "prompt": "Open Orbrey for the connected household.",
+                "tools_triggered": "orbrey_home",
+                "expected_behavior": "If the household does not pass the adult-only membership check, expect a generic server denial before household data is read. Explain that this ChatGPT connection requires an adult-only household; do not retry through another endpoint or disclose any member details."
+              }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "This plugin does not sell products or process payments. Grocery tools manage the household list only; they do not place orders."
+      },
+      "publication": {
+        "countries": [
+          "AU",
+          "US",
+          "GB",
+          "NZ",
+          "CA",
+          "IE"
+        ],
+        "release_notes": "Orbrey home screen, household workflows, and the hosted Orbrey MCP connection. Grocery tools manage lists only; no purchases are made in ChatGPT."
+      }
+    }
+  }
+}

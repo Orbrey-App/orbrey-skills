@@ -1,55 +1,23 @@
-# Routine — {{Routine Name}} ({{Member}})
+# Routine Proposal — {{Routine name}}
 
-**Type:** {{morning | school-prep | after-school | dinner | bedtime | weekend | custom}}
-**Anchor:** {{anchor name}} at {{HH:mm}}
-**Window:** {{HH:mm}} – {{HH:mm}} ({{minutes}} min available)
-**Built:** {{DD/MM/YYYY}}
+**Members:** {{members resolved by members_list}}
+**First date:** {{YYYY-MM-DD}}
+**Repeat:** {{repeat_unit}}, interval {{repeat_interval}}
+**Days:** {{days_of_week when used}}
+**Time of day:** {{ANYTIME, MORNING, AFTERNOON, EVENING, or not set}}
 
----
+## Steps
 
-## Time Math
+| Order | Task title | Assignee | Timer (seconds) | Gem value | Notes |
+|---:|---|---|---:|---:|---|
+| {{n}} | {{step title}} | {{member}} | {{timer or not set}} | {{integer or not set}} | {{user-provided guidance}} |
 
-| Allocated | Available | Slack |
-|---|---|---|
-| {{n}} min | {{m}} min | {{m-n}} min |
+Orbrey stores each step as a separate routine task. A task timer is not a calendar duration. Orbrey does not enforce step order, exact clock times, or dependencies. A configured gem value is credited when that occurrence is completed.
 
-{{If slack < 0, surface the overrun and what the user agreed to drop or move.}}
+## Confirmation
 
----
+No tasks have been created. Confirm the complete set before creation.
 
-## Timeline
+## Open questions
 
-| Time | Step | Duration | Assigned | Notes |
-|---|---|---:|---|---|
-| {{HH:mm}} | {{step}} | {{n}} min | {{member}} | {{depends on / handoff}} |
-
----
-
-## Recurring Task Occurrences (Proposed)
-
-| Title | Assigned | Recurrence | First due |
-|---|---|---|---|
-| {{step}} | {{member}} | FREQ=DAILY;BYDAY=MO,TU,WE,TH,FR | {{DD/MM/YYYY}} |
-
-Confirm to create.
-
----
-
-## Dependencies
-
-- {{Step}} → relies on {{prior routine}} (e.g. "uniform laid out" — bedtime routine)
-- {{Step}} → must precede {{later step}}
-
----
-
-## Open Items
-
-- [ ] {{Item}}
-
----
-
-## Next Actions
-
-- Build the matching {{counterpart routine}} (e.g. if you built bedtime, build morning next)
-- Run `/orbrey-ai:family-week-planner` to merge with chores and calendar
-- Watch for the first 2 weeks; tighten any step that consistently overruns
+- {{decision, or none}}

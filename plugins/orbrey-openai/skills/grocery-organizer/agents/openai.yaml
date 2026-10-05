@@ -1,0 +1,10 @@
+interface:
+  display_name: "Grocery Organizer"
+  short_description: "Review and tidy the household grocery list"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read and organise data in the connected Orbrey household."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

@@ -76,6 +76,5 @@
 
 ## Next Actions
 
-- Take this list to the shops, or share via Orbrey app
-- Run `/plan-week` next time to auto-sync new ingredients
-- Run `/family-digest` for a weekly household audit
+- Review the list in Orbrey or use it for shopping
+- Run `/plan-week` to review meal planning and any proposed grocery changes

@@ -1,0 +1,10 @@
+interface:
+  display_name: "Routine Coach"
+  short_description: "Guide and update today's routine tasks"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read and update authorised household task occurrences after user intent."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

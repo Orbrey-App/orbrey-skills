@@ -4,6 +4,14 @@ All notable changes to the `orbrey` plugin are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] — 2026-10-05
+
+### Fixed
+
+- Pointed the Claude Code MCP configuration at the worker's Streamable HTTP endpoint at `/` instead of the unserved `/mcp` path.
+- Replaced the stale 21-tool inventory and dotted tool names in the README with the current 63-tool registry reference.
+- Clarified that the server has no `households.set_default` tool and that the ChatGPT package is maintained separately.
+
 ## [0.3.0] — 2026-07-19
 
 Rebuild of `kitchen-concierge` following a full skill audit that scored the 0.2.0

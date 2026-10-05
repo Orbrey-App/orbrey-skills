@@ -1,0 +1,10 @@
+interface:
+  display_name: "Chore Fairness"
+  short_description: "Review returned household task history"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read authorised household task history and member names when available."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

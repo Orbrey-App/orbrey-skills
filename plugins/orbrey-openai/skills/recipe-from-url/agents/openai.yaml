@@ -1,0 +1,10 @@
+interface:
+  display_name: "Recipe Import"
+  short_description: "Save recipes from content provided in chat"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Save a user-approved recipe in the authorised household library."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

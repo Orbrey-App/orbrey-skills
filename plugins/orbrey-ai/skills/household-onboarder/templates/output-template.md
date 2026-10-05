@@ -1,79 +1,23 @@
-# Onboarded — {{Member Name}}
+# Orbrey Onboarding Checklist
 
-**Household:** {{name}}
-**Date:** {{DD/MM/YYYY}}
-**Onboarded by:** {{admin name}}
+**Person:** {{name provided by the user}}
+**Current roster checked:** {{members_list date and returned result}}
+**Orbrey app setup completed by user:** {{yes, no, or pending}}
 
----
+## Checklist
 
-## Profile
+- [ ] Person added or invited in the Orbrey app by an authorised household manager
+- [ ] Role and permissions reviewed in the Orbrey app
+- [ ] External calendar connection completed in the Orbrey app, if needed
+- [ ] Current member roster verified with members_list
+- [ ] Requested calendar, tasks, or rewards details read back from available tools
 
-- **Display name:** {{name}}
-- **Role:** {{admin | parent | partner | child | flatmate | carer | guest}}
-- **Age:** {{n}} (if child)
-- **Email:** {{email}}
-- **Phone:** {{phone or "—"}}
-- **Time-bound invite ends:** {{DD/MM/YYYY or "no expiry"}}
+## What this connection can confirm
 
----
+List only fields returned by the requested MCP tools. The MCP cannot create members, send invitations, change roles or permissions, connect external calendars, or set allowance rules. members_list does not return age, allergy severity tiers, or ingredient aliases.
 
-## Dietary Record
+## Remaining work
 
-- **Allergies:**
-  - {{ingredient}} — {{[SEVERE] | moderate | preference}}
-- **Dietary pattern:** {{none | vegetarian | vegan | pescatarian | halal | kosher | other}}
-- **Cultural patterns:** {{e.g. Friday is fish night}}
-- **Strong dislikes:** {{list}}
+- {{Action for the user in the Orbrey app, or none}}
 
----
-
-## Scope Grants
-
-| Scope | Granted? | Notes |
-|---|---|---|
-| tasks:read | yes / no | |
-| tasks:write | yes / no | |
-| lists:read | yes / no | |
-| lists:write | yes / no | |
-| calendar:read | yes / no | |
-| calendar:write | yes / no | |
-| recipes:read | yes / no | |
-| recipes:write | yes / no | |
-| grocery:read | yes / no | |
-| grocery:write | yes / no | |
-| rewards:read | yes / no | |
-| rewards:write | yes / no | |
-
-Confirmed by: {{admin name}} on {{DD/MM/YYYY}}.
-
----
-
-## Calendar Connection
-
-- **Provider connected:** {{Google | iCloud | Outlook | none}}
-- **First sync result:** {{N events imported | not yet synced | skipped}}
-- **Action needed:** {{e.g. "Member to grant Google access via app"}}
-
----
-
-## Reward Wallet
-
-- **Wallet created:** yes / n/a
-- **Starting balance:** ${{n}}
-- **Weekly allowance:** ${{n}}
-- **Allowance source:** {{base | hybrid with chores | n/a}}
-
----
-
-## Next Actions
-
-- [ ] Run `/orbrey-ai:chore-rotator` to slot {{member}} into the rotation
-- [ ] Run `/orbrey-ai:routine-builder` for {{member}}'s morning routine
-- [ ] Run `/orbrey-ai:reward-strategist` if this is the household's first child
-- [ ] (For adults) Trigger `calendar.sync_import` once OAuth is granted
-
----
-
-## Open Items
-
-- [ ] {{Anything pending}}
+No local dietary file is created by this checklist. Kitchen Concierge keeps its separate, user-confirmed Claude-local dietary profile.

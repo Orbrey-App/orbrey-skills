@@ -10,17 +10,17 @@ Fires the `household-curator` agent end-to-end and writes the resulting Weekly D
 
 ## Workflow
 
-1. Resolve household ID from `default_household_id`.
+1. Use the single household authorised for this MCP connection; do not ask for a household ID.
 2. If `$ARGUMENTS` contains `--gentle`, pass that through to the curator (suppresses non-essential findings — used for hard weeks).
 3. Invoke the **`household-curator`** agent.
-4. The curator pulls calendar / tasks / recipes / grocery / rewards in parallel and produces the digest.
-5. Save the output as `weekly-digest-{{Sun-DD-MM-YYYY}}.md`.
-6. Print a short summary in chat: `Critical: N · Watch: M · Wins: K · Saved to: <path>`.
+4. The curator reads only domains allowed by the connection's current scopes. Rewards and pantry may require Plus; omit a domain if it is unavailable and say so.
+5. Present the digest in chat. Create a local markdown file only if the user asks for a file or the current environment supports a requested save location.
+6. Print a short summary in chat: `Critical: N · Watch: M · Wins: K`.
 
 ## Hard rules
 
 - **Read-only.** The curator never mutates state. Findings are advisory.
-- **One artefact.** Always produce the markdown digest file, even if there's nothing critical.
+- **No invented persistence.** Do not claim a digest file was saved unless a file was actually created.
 - **Lead with wins** when the week was good. Don't manufacture findings to fill space.
 
 ## Suggested cadence

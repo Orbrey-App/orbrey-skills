@@ -2,7 +2,7 @@
   "mcpServers": {
     "orbrey": {
       "type": "http",
-      "url": "https://mcp.orbrey.com/mcp"
+      "url": "https://mcp.orbrey.com/"
     }
   }
 }

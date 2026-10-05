@@ -10,10 +10,10 @@ Read-only situational awareness. The "what's coming?" question answered fast.
 
 ## Workflow
 
-1. Resolve household ID from `default_household_id`.
+1. Use the single household authorised for this MCP connection.
 2. Pull in parallel:
-   - `orbrey:calendar.list` (limit 50, default order)
-   - `orbrey:tasks.list` with `start_date = today`, `end_date = today + 3` days
+   - `orbrey:calendar_list` with a date window covering the next 72 hours
+   - `orbrey:tasks_list` with `start_date = household-local today`, `end_date = household-local today + 3 days`
 3. Filter to events/tasks within the next 72 hours.
 4. If `$ARGUMENTS` names a member, filter to events/tasks involving that member.
 5. Sort by start time ascending; take top 5.

@@ -1,0 +1,10 @@
+interface:
+  display_name: "Chore Rotator"
+  short_description: "Plan a household chore schedule"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read household members and task history, and create tasks after approval."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

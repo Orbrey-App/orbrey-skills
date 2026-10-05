@@ -1,0 +1,10 @@
+interface:
+  display_name: "Calendar Conflict Finder"
+  short_description: "Find conflicts in the household calendar"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read authorised household calendar data."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

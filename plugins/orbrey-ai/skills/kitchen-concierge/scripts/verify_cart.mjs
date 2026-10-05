@@ -46,6 +46,7 @@ const EXIT = {
 };
 
 const PROFILE_MAX_AGE_DAYS = 90;
+const ROSTER_MAX_AGE_MINUTES = 15;
 
 function fail(code, message, detail) {
   console.error(`VERIFY FAILED (${code}): ${message}`);
@@ -84,7 +85,13 @@ if (!Number.isFinite(scrapedTotal) || scrapedTotal < 0) {
 }
 
 const cart = readJson(args.cart, 'cart');
+if (!cart || typeof cart !== 'object' || Array.isArray(cart) || !Array.isArray(cart.items)) {
+  fail(EXIT.PRECONDITION, 'cart must be a JSON object with an items array');
+}
 const config = readJson(paths.config(), 'config (run `setup` first)');
+if (!config || typeof config !== 'object' || Array.isArray(config)) {
+  fail(EXIT.PRECONDITION, 'config is not a JSON object — re-run Kitchen Concierge setup');
+}
 
 // ---------------------------------------------------------------------------
 // Precondition: the spend ceiling must exist. There is no default — a missing
@@ -116,11 +123,39 @@ try {
     EXIT.PRECONDITION,
     'dietary profile is missing or unreadable — refusing to order food without it',
     `Expected at ${paths.dietaryProfiles()}\n` +
-      'Run /orbrey-ai:household-onboarder for each member to create it.\n' +
+      'Use Kitchen Concierge setup to create a profile for every current member.\n' +
       `(${err.message})`
   );
 }
 
+if (!profile || typeof profile !== 'object' || Array.isArray(profile)) {
+  fail(EXIT.PRECONDITION, 'dietary profile is not a JSON object');
+}
+const roster = readJson(paths.authorisedRoster(), 'fresh authorised member roster (refresh with members_list before ordering)');
+if (!roster || typeof roster !== 'object' || Array.isArray(roster)) {
+  fail(EXIT.PRECONDITION, 'authorised member roster is not a JSON object');
+}
+const rosterRefreshedAt = Date.parse(roster.refreshed_at ?? '');
+const rosterAgeMinutes = (Date.now() - rosterRefreshedAt) / 60_000;
+if (!Number.isFinite(rosterAgeMinutes) || rosterAgeMinutes < 0 || rosterAgeMinutes > ROSTER_MAX_AGE_MINUTES) {
+  fail(EXIT.PRECONDITION, 'authorised member roster is missing a valid, fresh timestamp', 'Call members_list and refresh authorised-roster.json immediately before cart verification.');
+}
+
+const rosterIds = Array.isArray(roster.member_ids) ? roster.member_ids : [];
+const profileIds = Array.isArray(profile.members)
+  ? profile.members.map((member) => member && typeof member === 'object' ? member.member_id : undefined)
+  : [];
+const validIds = (ids) => ids.length > 0
+  && ids.every((id) => typeof id === 'string' && id.trim().length > 0)
+  && new Set(ids).size === ids.length;
+if (!validIds(rosterIds) || !validIds(profileIds)) {
+  fail(EXIT.PRECONDITION, 'authorised roster or dietary profile has missing or duplicate member IDs', 'Use Kitchen Concierge setup to check every current member.');
+}
+const sortedRosterIds = [...rosterIds].sort();
+const sortedProfileIds = [...profileIds].sort();
+if (sortedRosterIds.length !== sortedProfileIds.length || sortedRosterIds.some((id, index) => id !== sortedProfileIds[index])) {
+  fail(EXIT.PRECONDITION, 'current members_list roster does not match the local dietary profile', 'Review the member IDs and food information in Kitchen Concierge setup; do not guess or order until they match.');
+}
 const updatedAt = Date.parse(profile.updated_at ?? '');
 const ageDays = Number.isFinite(updatedAt)
   ? (Date.now() - updatedAt) / 86_400_000
@@ -131,7 +166,7 @@ if (ageDays > PROFILE_MAX_AGE_DAYS && hasFailClosedRestriction(profile)) {
     EXIT.PRECONDITION,
     `dietary profile is ${Math.round(ageDays)} days old (limit ${PROFILE_MAX_AGE_DAYS}) ` +
       'and the household has life-threatening or medical restrictions',
-    'Re-confirm the profile with /orbrey-ai:household-onboarder before ordering.'
+    'Re-confirm the local profile in Kitchen Concierge setup before ordering.'
   );
 }
 

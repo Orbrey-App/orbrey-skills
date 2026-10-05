@@ -1,66 +1,22 @@
-# Chore Rotation — {{Household Name}}
+# Chore Schedule Proposal — {{Household}}
 
-**Period:** {{weekly | fortnightly | four-weekly}}
-**Start date:** {{DD/MM/YYYY}}
-**Members in rotation:** {{N}}
-**Reward rates:** Light ${{x}} · Medium ${{y}} · Heavy ${{z}}
-
----
+**Period:** {{start date}} to {{end date}}
+**Distribution rule:** {{equal task count or user-defined rule}}
+**Sources checked:** {{tool and returned date window, or not checked}}
 
 ## Assignments
 
-### {{Member 1}} ({{age}}) — {{effort points used}}/{{budget}} pts · projected ${{weekly earn}}/wk
+| Chore | Assignee | First due | Recurrence | Gem value |
+|---|---|---|---|---:|
+| {{task}} | {{member}} | {{YYYY-MM-DD}} | {{supported schedule}} | {{integer or not set}} |
 
-- [ ] **{{Chore}}** ({{tier}}, {{points}}pts, ${{$}}) — {{day}} {{HH:mm}}
-- [ ] **{{Chore}}** ({{tier}}, {{points}}pts, ${{$}}) — {{day}} {{HH:mm}}
+Gem values are product units, not money. A configured value is credited when the occurrence is completed.
 
-### {{Member 2}} ({{age}}) — {{effort}}/{{budget}} pts · ${{$}}/wk
+## Evidence and open questions
 
-- [ ] **{{Chore}}** ({{tier}}, {{points}}pts, ${{$}}) — {{day}}
+- {{returned workload evidence, or explain that none was available}}
+- {{unresolved schedule or member decision}}
 
-<!-- Repeat per member -->
+## Confirmation
 
----
-
-## Reward Projection
-
-| Member | Light | Medium | Heavy | Effort pts | Weekly $ |
-|---|---:|---:|---:|---:|---:|
-| {{Name}} | {{n}} | {{n}} | {{n}} | {{n}} | ${{n}} |
-
----
-
-## Proposed Task Occurrences
-
-The following will be created on confirmation:
-
-| Title | Assigned | Recurrence | First due | Reward |
-|---|---|---|---|---|
-| {{title}} | {{member}} | {{RRULE}} | {{DD/MM/YYYY}} | ${{n}} |
-
-Confirm to proceed. Decline to keep this as advisory only.
-
----
-
-## Open Items
-
-- [ ] {{Chore}} — nobody under capability cap; needs adult absorption or scope cut
-- [ ] {{Member}} flagged exclusion: {{chore}} ({{reason}})
-- [ ] {{Suggestion to recalibrate rates}}
-
----
-
-## Next Period Preview
-
-The rotation will swap so:
-
-- {{Member}} who did **{{chore}}** this period takes **{{different chore}}** next.
-- Rebalance is automatic once `tasks.list` history shows the completed entries.
-
----
-
-## Next Actions
-
-- Run `/orbrey-ai:routine-builder` to slot daily routine tasks alongside chores
-- Run `/orbrey-ai:reward-strategist` to design a redemption catalogue
-- Open the Orbrey app to confirm the chore occurrences appeared
+No tasks have been created yet. Confirm the complete table before creation.

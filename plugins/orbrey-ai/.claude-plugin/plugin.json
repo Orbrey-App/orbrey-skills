@@ -1,17 +1,9 @@
 {
   "name": "orbrey-ai",
-  "version": "0.3.0",
-  "description": "12 skills + 3 agents + 6 commands for running an Orbrey household — meal planning, grocery, chores, routines, family scheduling, calendar conflicts, and rewards. Includes kitchen-concierge, which places real grocery orders through your own Chrome session behind a code-enforced spend ceiling. Connects to the orbrey-mcp Cloudflare Worker over HTTP with OAuth handled by Claude Code.",
+  "version": "0.3.1",
+  "description": "Household planning skills, agents, and commands for Orbrey — meal planning, grocery lists, chores, routines, calendar coordination, and rewards. Includes an optional Claude-only browser workflow for preparing grocery orders; it is not included in the ChatGPT package. Connects to Orbrey's hosted MCP server using Claude Code OAuth.",
   "author": {
     "name": "Orbrey",
     "email": "support@orbrey.com"
-  },
-  "userConfig": {
-    "default_household_id": {
-      "type": "string",
-      "title": "Default household UUID (optional)",
-      "description": "Optional. When you have multiple households, set this to skip the disambiguation prompt. Otherwise the worker auto-resolves the household from your active grants. You can also set this server-side via the households.set_default MCP tool, which persists across sessions.",
-      "required": false
-    }
   }
 }

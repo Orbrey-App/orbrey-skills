@@ -1,77 +1,44 @@
-# Family Week — {{Household Name}}
+# Household week — {{Monday DD/MM/YYYY}} to {{Sunday DD/MM/YYYY}}
 
-**Week of:** {{Mon DD/MM/YYYY}} – {{Sun DD/MM/YYYY}}
-**Detail level:** {{fridge | full}}
-**Generated:** {{DD/MM/YYYY HH:mm}}
+## Monday
+- **Meals:** {{returned meal entries or not planned}}
+- **Tasks:** {{returned task occurrences or none returned}}
+- **Calendar:** {{returned events or none returned}}
 
----
+## Tuesday
+- **Meals:** {{...}}
+- **Tasks:** {{...}}
+- **Calendar:** {{...}}
 
-## Mon {{DD/MM}}
+## Wednesday
+- **Meals:** {{...}}
+- **Tasks:** {{...}}
+- **Calendar:** {{...}}
 
-**Morning** · {{events / routines}}
-**Afternoon** · {{events}}
-**Evening** · {{events}}
-**Dinner** · {{recipe}}
-**Chores** · {{member}}: {{task}} · {{member}}: {{task}}
+## Thursday
+- **Meals:** {{...}}
+- **Tasks:** {{...}}
+- **Calendar:** {{...}}
 
----
+## Friday
+- **Meals:** {{...}}
+- **Tasks:** {{...}}
+- **Calendar:** {{...}}
 
-## Tue {{DD/MM}}
+## Saturday
+- **Meals:** {{...}}
+- **Tasks:** {{...}}
+- **Calendar:** {{...}}
 
-**Morning** · {{...}}
-**Afternoon** · {{...}}
-**Evening** · {{...}}
-**Dinner** · {{recipe}}
-**Chores** · {{...}}
+## Sunday
+- **Meals:** {{...}}
+- **Tasks:** {{...}}
+- **Calendar:** {{...}}
 
----
+## Source availability
 
-## Wed {{DD/MM}}
+- Meal plan: {{returned / unavailable}}
+- Tasks: {{returned / unavailable}}
+- Calendar: {{returned / unavailable}}
 
-{{...}}
-
----
-
-## Thu {{DD/MM}}
-
-{{...}}
-
----
-
-## Fri {{DD/MM}}
-
-{{...}}
-
----
-
-## Sat {{DD/MM}}
-
-{{...}}
-
----
-
-## Sun {{DD/MM}}
-
-{{...}}
-
----
-
-## Reminders this week
-
-- [ ] {{Bin night Sunday}}
-- [ ] {{Library returns Wednesday}}
-- [ ] {{Excursion permission slip due Friday}}
-
----
-
-## Heads up
-
-- **Busiest day:** {{day}} ({{n}} items)
-- **Free evening:** {{day evening, or "none — every evening is booked"}}
-- **Source notes:** Meal plan generated {{when}}; chore rotation period {{period}}; calendar last synced {{when}}.
-
----
-
-## Open items
-
-- [ ] {{Decision needed}}
+This is a summary of data returned by the connected Orbrey MCP for the authorised household.

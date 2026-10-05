@@ -1,0 +1,10 @@
+interface:
+  display_name: "Getting Started"
+  short_description: "Connect to a household and start using Orbrey"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read and organise data in the connected Orbrey household."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

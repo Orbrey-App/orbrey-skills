@@ -1,0 +1,10 @@
+interface:
+  display_name: "Pantry To Recipe"
+  short_description: "Find saved recipes that use pantry items"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read saved recipes and pantry data from the authorised household."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

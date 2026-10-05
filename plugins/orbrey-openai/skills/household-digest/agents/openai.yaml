@@ -1,0 +1,10 @@
+interface:
+  display_name: "Household Digest"
+  short_description: "Summarise authorised household information"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read authorised household records available to this connection."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

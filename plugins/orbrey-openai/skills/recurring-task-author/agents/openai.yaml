@@ -1,0 +1,10 @@
+interface:
+  display_name: "Recurring Task Author"
+  short_description: "Create tasks with repeat schedules"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read and create tasks in the authorised household."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

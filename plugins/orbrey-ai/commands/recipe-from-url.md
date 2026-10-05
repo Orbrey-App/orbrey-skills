@@ -1,34 +1,27 @@
 ---
 name: recipe-from-url
-description: Import a recipe from a URL via the ai-parse Edge Function and insert it into the household library via recipes.create.
-argument-hint: "<url>"
+description: Help the user add a recipe from a URL, without claiming the MCP can fetch or parse webpages.
+argument-hint: "<url or pasted recipe>"
 ---
 
 # /recipe-from-url
 
-One-shot recipe import. Hands the URL to the Orbrey backend's `ai-parse` Edge Function, normalises the result, and inserts via `orbrey:recipes.create`.
+The Orbrey MCP server does not expose a recipe-URL fetch or parsing tool.
 
 ## Workflow
 
-1. Resolve household ID from `default_household_id`.
-2. Read `$ARGUMENTS` — must be a single URL. Reject if missing or malformed.
-3. Call the Orbrey backend `ai-parse` Edge Function with `{ type: "recipe_url", url: "<url>" }`. (Note: this is an Edge Function call, not an MCP tool — it goes through the Orbrey app's HTTP API, not the orbrey-mcp Worker. If the orbrey-mcp does not expose `ai-parse`, surface this and ask the user to invoke the import from inside the Orbrey app, then come back here to confirm the recipe appeared via `recipes.list`.)
-4. Show the parsed recipe to the user *before* writing — title, servings, prep/cook time, ingredient list, instructions snippet, image preview if available.
-5. Ask for confirmation. If accepted, call `orbrey:recipes.create` with the normalised payload.
-6. After the suggest-meal-slot PostToolUse hook fires (if the user has it on), they'll get a one-click "slot this into next week's plan" prompt.
+1. Read `$ARGUMENTS`. If it is a URL only, explain that this plugin cannot fetch or parse the page; ask the user to import it in the Orbrey app or paste the recipe content here.
+2. If the user provides recipe details, prepare a draft with the title and only the ingredients, steps, and metadata that are actually present. Do not invent quantities, timings, tags, or instructions.
+3. Show the complete draft and ask the user to confirm adding it to the authorised household's recipe library.
+4. After confirmation, call `recipes_create` with the recipe payload. Report the returned result, and do not claim the recipe was saved if the call fails.
 
 ## Hard rules
 
-- **Confirm before writing.** The parsed result may have errors (wrong servings, missing ingredients). The user previews and adjusts before the create call.
-- **Don't auto-tag aggressively.** Honour any tags the parser surfaces, but suggest additions rather than assuming (e.g. "this looks vegetarian — confirm?").
-- **Strip junk.** Many recipe sites prefix instructions with marketing copy. Trim it.
-- **Honour 50KB / 2KB content / URL limits** declared by the `ai-parse` Edge Function.
+- Do not call undocumented Edge Functions or claim to read an external URL.
+- Do not send a create tool call until the user has approved the exact draft.
+- Respect the server's scopes, household binding, plan access, and any tool error.
 
-## Output
+## Next actions
 
-Confirms via short message: `Recipe "${title}" added to library. ID: ${recipe_id}.`
-
-## Next-action chain (suggest only)
-
-- `/plan-week` — incorporates the new recipe into next week's plan
-- `/orbrey-ai:pantry-to-recipe` — see if you can cook this tonight from pantry
+- `/plan-week` to consider the saved recipe in a meal plan.
+- `pantry-to-recipe` to compare saved recipes with available pantry items.

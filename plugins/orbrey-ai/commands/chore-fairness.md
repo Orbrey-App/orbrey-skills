@@ -1,59 +1,26 @@
 ---
 name: chore-fairness
-description: Show chore distribution by member for the current rotation period and suggest rebalance moves.
-argument-hint: "[optional-period — e.g. 'last 4 weeks' or 'this week']"
+description: Summarise returned task occurrence counts for a chosen household-local date window and compare them with targets the user supplies.
+argument-hint: "[optional period, for example last four weeks or this week]"
 ---
 
-# /chore-fairness
+# Chore fairness
 
-Diagnostic-only command. Reads `tasks.list` history and surfaces who's actually been doing what — without modifying the rotation.
+Read-only review of the task occurrences returned by Orbrey. Do not change tasks.
 
 ## Workflow
 
-1. Resolve household ID from `default_household_id`.
-2. Determine the analysis window from `$ARGUMENTS`. Default: last 4 weeks.
-3. Pull `orbrey:tasks.list` for the window with chore tasks filtered (look for chore-tier metadata or chore-category tags).
-4. Pull `orbrey:rewards.wallets` for member ages and weekly_allowance context.
-5. Compute per-member:
-   - Chores completed (count)
-   - Chore effort points (using the same scale as `chore-rotator`: light 2, medium 5, heavy 9)
-   - Chore credits earned (AUD)
-   - Skip rate (skipped / total assigned)
-6. Compare to the **target effort budget** for each member's age:
-
-   | Age band | Target weekly effort points |
-   |---|---:|
-   | 6–8 | 5 |
-   | 9–11 | 10 |
-   | 12–14 | 18 |
-   | 15–17 | 25 |
-   | Adult | 35 |
-
-7. Flag imbalances (>20% over or under target).
+1. Use the single household authorised for this MCP connection. Do not ask for or guess a household ID.
+2. Determine the date window from the user's request. If not supplied, offer a recent window that fits tasks_list limits (maximum 93 days).
+3. Call tasks_list for the window. Call members_list only if names are needed to explain returned member IDs.
+4. Summarise only returned occurrences and statuses. Count completed, open, and skipped only when those statuses are present in the response. State the window and any pagination or access limits.
+5. Compare distribution with a target only if the user provides the target rule. Do not infer age, effort, capability, allowance, currency, or earned gems.
+6. Keep recommendations as options. Ask before making any change; use chore-rotator for a confirmed new schedule.
 
 ## Output
 
-Markdown table grouped by member:
+| Member | Completed | Open | Skipped | Notes |
+|---|---:|---:|---:|---|
+| {{member}} | {{returned count}} | {{returned count}} | {{returned count}} | {{only evidence-based note}} |
 
-```
-| Member | Completed | Skipped | Effort pts | Target | Variance | Earned |
-|---|---:|---:|---:|---:|---|---:|
-| Aria (14) | 12 | 1 | 64 | 72 | -11% | $48 |
-| Maya (11) | 10 | 2 | 28 | 40 | -30% ⚠ | $20 |
-```
-
-Plus a **Suggested rebalance** section:
-
-- "Aria is at 89% of target — add 1 medium chore back into rotation"
-- "Maya skipped violin-prep 2× — consider moving that out of chore list (it's a routine task, not a chore)"
-
-## Hard rules
-
-- **Read-only.** Do not call `tasks.set_status`, `rewards.adjust`, or any mutation. Surface recommendations only.
-- **Don't shame.** Variance is data; the family decides what to act on.
-- **Don't propose a new rotation here.** Refer them to `/orbrey-ai:chore-rotator` for that.
-
-## Next-action chain (suggest only)
-
-- `/orbrey-ai:chore-rotator` — generate a rebalanced rotation
-- `/family-digest` — full Sunday-evening curated audit
+If no target is provided, describe the counts without labelling them fair or unfair. Never manufacture a sample person or result.

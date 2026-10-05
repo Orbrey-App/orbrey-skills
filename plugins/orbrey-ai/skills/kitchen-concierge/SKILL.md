@@ -2,7 +2,7 @@
 name: kitchen-concierge
 description: >
   Automate the full household food cycle on a schedule — plan meals, diff the
-  pantry, build the shopping list, notify a household member, then build and
+  pantry, build the shopping list, show the brief in the current session, then build and
   place a grocery order at Woolworths or Coles for your approval. Subcommands:
   setup, run, approve, status. Use for recurring set-and-forget automation that
   includes ordering. For a one-off meal plan with no ordering and no schedule,
@@ -10,17 +10,15 @@ description: >
 argument-hint: "[setup | run | approve | status]"
 allowed-tools: >
   Read Write Edit Bash AskUserQuestion Skill
-  mcp__orbrey__households_list mcp__orbrey__households_set_default
+  mcp__orbrey__members_list mcp__orbrey__pantry_list
   mcp__orbrey__grocery_list mcp__orbrey__grocery_add_item
   mcp__orbrey__recipes_list mcp__orbrey__recipes_create
-  mcp__orbrey__lists_list mcp__orbrey__lists_create mcp__orbrey__lists_add_item
-  mcp__orbrey__rewards_wallets mcp__orbrey__rewards_adjust
   mcp__scheduled-tasks__create_scheduled_task
   mcp__scheduled-tasks__list_scheduled_tasks
 effort: high
 license: MIT
 metadata:
-  version: "0.3.0"
+  version: "0.3.1"
   spends-money: true
 ---
 
@@ -36,7 +34,7 @@ $ARGUMENTS
 
 You orchestrate the household food cycle so the user only has to cook:
 
-> **Plan → Pantry diff → Shopping list → Notify → Order → Log**
+> **Plan → Pantry diff → Shopping list → Present brief → Order → Log**
 
 You are an **orchestrator, not a re-implementer**. Call these via the `Skill` tool and do not duplicate their logic:
 
@@ -97,7 +95,7 @@ Read `reference.md` §2 for the full panel text. Six `AskUserQuestion` panels pl
 | S1 | Postcode + suburb | *(prose — ask in your reply, not via the tool)* | AskUserQuestion has no free-text field |
 | S2 | Primary store | `Store` | Max 4 options — pick the 4 nearest across chains |
 | S3 | Fallback store | `Fallback` | Primary excluded |
-| S4 | Cadence · auto-save recipes · notify target | `Cadence` `Recipes` `Notify` | One call, three questions |
+| S4 | Cadence · auto-save recipes | Cadence / Recipes | One call, two questions |
 | S5 | **Maximum total for one order** | `Max spend` | `$100` `$150` `$250` `$400` → `max_total_aud` |
 | S6 | Unavailable-item policy | `Subs` | Substitute similar · Ask me first · Skip item · Cancel run |
 
@@ -112,8 +110,9 @@ Write answers to `${CLAUDE_PLUGIN_DATA}/config.json`. Then register the routine 
 
 Confirm by calling `mcp__scheduled-tasks__list_scheduled_tasks` and showing the new entry.
 
-**Before finishing setup**, check that `${CLAUDE_PLUGIN_DATA}/household-dietary-profiles.json` exists and covers every household member. If it does not, tell the user plainly that ordering will refuse to run until it does, and point them at `/orbrey-ai:household-onboarder`.
+During setup, call members_list and use the returned member IDs as the roster for the local dietary profile. Explain that members_list may show food preferences, foods to avoid, and allergies already recorded in Orbrey, but it does not provide allergy severity tiers or ingredient aliases.
 
+Ask the user to confirm the dietary information for each returned member in their own words. Include every current member in the local profile, including members with no restrictions, and save it to CLAUDE_PLUGIN_DATA/household-dietary-profiles.json using the supplied schema. The file is local to this Claude installation and is separate from Orbrey account data. Do not include member ages. If the user cannot confirm the profile, leave ordering disabled and tell them what is missing.
 ---
 
 ## Phase 2: Status
@@ -123,7 +122,7 @@ Read `${CLAUDE_PLUGIN_DATA}/config.json` and call `mcp__scheduled-tasks__list_sc
 - Cadence + next fire time
 - Primary / fallback store
 - **Max spend per order** and substitution policy
-- Notify target
+- Brief channel
 - **Dietary profile: N members covered, last confirmed DD/MM/YYYY** — flag in bold if missing or >90 days old
 - Last run timestamp + outcome (newest file in `${CLAUDE_PLUGIN_DATA}/runs/`)
 - Whether a deferred order is awaiting approval
@@ -141,26 +140,18 @@ Surface a one-line status before each step so the user can interrupt.
 Determine whether a human is present. A scheduled run has nobody to answer a question — and `AskUserQuestion` is unavailable in some contexts and denied outright in `dontAsk` mode, so a flow that blocks on it is not a flow.
 
 - **Interactive** — the user typed the command. Full cycle including ordering.
-- **Unattended** — fired by the scheduler. Execute 3.1–3.5, write the cart, notify, then **exit with `deferred-awaiting-approval`**. Do not attempt Phase 3.6.
+- **Unattended** — fired by the scheduler. Execute 3.1–3.5, present the brief, write the cart, then **exit with `deferred-awaiting-approval`**. Do not claim that a household member was messaged. Do not attempt Phase 3.6.
 
 If the cadence is fortnightly and this is an off-week, log a skip and exit.
 
 ### 3.1 Context + dietary precondition
 
-1. `households_list` — confirm the household in config; `households_set_default` if it differs.
-2. `rewards_wallets` to enumerate members where the scope allows it. If it does not (it is a paid scope), fall back to the member list recorded in config at setup.
-3. **Load `${CLAUDE_PLUGIN_DATA}/household-dietary-profiles.json`.**
+1. Call members_list for the roster authorised to this connection. Do not call household discovery or default-household tools; none are exposed, and this connection already selects one household.
+2. Load CLAUDE_PLUGIN_DATA/household-dietary-profiles.json. Match each returned Orbrey member ID to a manually confirmed profile entry. If an ID is missing, duplicated, or the current roster differs from the profile, stop before meal planning and ask the user to review the profile in setup. Do not guess that a similarly named person is the same member.
+3. Check the profile timestamp. If it is older than 90 days and a life_threatening or medical_avoid restriction exists, stop and ask the user to reconfirm it. The profile is sensitive, local data; do not send it to the OpenAI package or describe it as an Orbrey-server record.
+4. Build a dietary contract from the local profile and pass only the necessary details to the meal-planner workflow. Keep the distinction clear: members_list returns the current Orbrey roster and basic food-profile fields, while severity tiers and aliases come from the manually confirmed local profile.
 
-**This is a hard precondition. Fail closed.** Abort the run before 3.2, notify the user, and log a partial run if:
-
-- the file is missing or will not parse, **or**
-- any household member has no entry, **or**
-- `updated_at` is more than 90 days old and any member carries a `life_threatening` or `medical_avoid` restriction.
-
-Do not proceed on a partial profile. Do not infer restrictions. Do not ask the user to confirm allergies from memory mid-run — an allergy record with no source is a rumour, and this skill buys the food.
-
-Build the **dietary contract**: every member's restrictions with their tier, ingredient and aliases. See `templates/dietary-profile-schema.json` for the shape and what each tier means.
-
+This is a hard precondition for ordering. If the local profile is missing, invalid, incomplete, stale under the rule above, or does not match the returned member IDs, abort before 3.2 and log a partial run. Never infer an allergy restriction or safety from missing data.
 ### 3.2 Plan meals
 
 Invoke `Skill(skill="orbrey-ai:meal-planner", args="<period> | dietary contract: <serialised contract>")`.
@@ -171,12 +162,9 @@ Re-read the plan afterwards and verify no recipe violates a `life_threatening` o
 
 ### 3.3 Pantry diff
 
-There is **no `pantry_list` MCP tool** — pantry lives as a shared list. Call `lists_list`, find the list named "Pantry" (or nearest), and read its items.
+Call pantry_list when the household plan and granted scopes allow it. Use only returned pantry items. If pantry_list is unavailable or access is denied, state that pantry inventory was not checked and treat pantry quantities as unknown; do not assume ingredients are on hand.
 
-For each planned recipe, walk its ingredients from `recipes_list`. Diff required against on-hand. Produce `missing[]` as `{ name, quantity, unit, recipe_source }`.
-
-If the pantry list has not been touched in >30 days, warn in the brief and proceed.
-
+For each planned recipe, compare returned recipe ingredients with returned pantry quantities. Produce missing items with name, quantity, unit, and recipe source. If pantry records appear stale, warn the user and ask them to confirm before treating stock as current.
 ### 3.4 Shopping list
 
 1. `grocery_list` first — check what is already there.
@@ -184,11 +172,11 @@ If the pantry list has not been touched in >30 days, warn in the brief and proce
 3. `Skill(skill="orbrey-ai:grocery-organizer")` to dedupe, categorise, aisle-order.
 4. Re-read `grocery_list` for the final state.
 
-### 3.5 Notify
+### 3.5 Present the brief
 
-Compose the brief per `templates/output-template.md`: meals planned, pantry status, shopping list with estimated total, suggested store and mode, dietary contract restated at the top.
+Compose the brief per templates/output-template.md: meals planned, pantry status, shopping list with estimated total, suggested store and mode, and the confirmed dietary contract.
 
-Deliver per the configured channel — render in-session, and/or `lists_add_item` against the household's notification list (`lists_list` first; `lists_create` if absent).
+Show the brief in the current session. The Orbrey MCP has no household messaging tool; do not add the brief to a shared list or claim a household member was notified.
 
 **Unattended runs stop here.** Write the cart to `${CLAUDE_PLUGIN_DATA}/pending-cart.json`, log `deferred-awaiting-approval`, and tell the user to run `/orbrey-ai:kitchen-concierge approve` when they are next at the keyboard.
 
@@ -206,7 +194,7 @@ Run **Phase 0.5** first. Then:
 3. Set the fulfilment location, then add each item. Record for each line: requested name, matched product title, unit price, quantity, and whether it was substituted.
 4. Go to the review-order page and **read the retailer's own total**.
 5. Write the cart (including matched product titles and any substitution notes) to `${CLAUDE_PLUGIN_DATA}/pending-cart.json`.
-6. Verify:
+6. Call members_list again immediately before cart verification. Write the current member IDs and the current time to CLAUDE_PLUGIN_DATA/authorised-roster.json as { "refreshed_at": "ISO timestamp", "member_ids": ["..."] }. If the roster changed or no longer exactly matches the local dietary profile, stop. Then verify:
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/skills/kitchen-concierge/scripts/verify_cart.mjs" \
      --cart "${CLAUDE_PLUGIN_DATA}/pending-cart.json" \
@@ -231,20 +219,19 @@ Run **Phase 0.5** first. Then:
 
 ### 3.7 Log
 
-Append `${CLAUDE_PLUGIN_DATA}/runs/<ISO8601>.md` per `reference.md` §5. Never edit a previous entry — write a follow-up if state changes.
+Append CLAUDE_PLUGIN_DATA/runs/<ISO8601>.md per reference.md §5. Never edit a previous entry; write a follow-up if state changes.
 
-Optionally `rewards_adjust` for the notified member if config awards points for confirming.
-
+Do not adjust reward wallets as part of a grocery run or planning brief. Rewards are outside the order workflow.
 ---
 
 ## Phase 4: Self-check
 
 Before declaring success:
 
-- [ ] Dietary profile resolved for **every** member; life-threatening allergens enumerated
+- [ ] Dietary profile member IDs matched the fresh members_list roster; confirmed restrictions checked
 - [ ] Meal plan exists for the period and violates no `life_threatening` / `medical_avoid` restriction
 - [ ] Shopping list non-empty, or empty with a stated reason
-- [ ] Notification delivered to the configured member
+- [ ] Brief shown in-session; no unsupported household notification claimed
 - [ ] `verify_cart.mjs` exited 0 before any checkout interaction
 - [ ] Order outcome logged, including cancellations and failures
 - [ ] Session and marker files cleaned up
@@ -281,7 +268,7 @@ Resumes a deferred run. Read `${CLAUDE_PLUGIN_DATA}/pending-cart.json` and the n
 
 ## Output
 
-Per run: a one-line status per phase, the notification brief (3.5), the verified cart summary (3.6), and the outcome card (3.7).
+Per run: a one-line status per phase, the planning brief (3.5), the verified cart summary (3.6), and the outcome card (3.7).
 
 ---
 
@@ -292,6 +279,6 @@ Load on demand — do not read these preemptively:
 - `reference.md` — architecture rationale, setup panel text, cron cookbook, run-log template, edge cases, troubleshooting
 - `templates/dietary-profile-schema.json` — profile shape and tier semantics
 - `templates/cart-schema.json` — cart payload for `verify_cart.mjs`
-- `templates/output-template.md` — notification brief layout
+- `templates/output-template.md` — planning brief layout
 - `scripts/verify_cart.mjs` — spend ceiling + allergen enforcement
 - `examples/example-run.md` · `examples/example-setup.md` — illustrative transcripts

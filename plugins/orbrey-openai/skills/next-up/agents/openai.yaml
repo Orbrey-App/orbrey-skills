@@ -1,0 +1,10 @@
+interface:
+  display_name: "Next Up"
+  short_description: "Show upcoming household tasks and events"
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "orbrey"
+      description: "Read authorised household tasks and calendar events."
+      transport: "streamable_http"
+      url: "https://mcp.orbrey.com/"

@@ -29,8 +29,10 @@ export const paths = {
   approvalMarker: () => join(dataDir(), 'pending-order.json'),
   /** Written by the skill at the start of an ordering run, removed at the end. */
   orderSession: () => join(dataDir(), 'order-session.json'),
-  /** Written by household-onboarder, read fail-closed by the skills. */
+  /** User-confirmed local dietary profile. */
   dietaryProfiles: () => join(dataDir(), 'household-dietary-profiles.json'),
+  /** Fresh roster snapshot written from members_list before each order verification. */
+  authorisedRoster: () => join(dataDir(), 'authorised-roster.json'),
   /** Setup answers — cadence, stores, max_total_aud, substitution policy. */
   config: () => join(dataDir(), 'config.json'),
   /** Append-only per-run audit log. */

@@ -1,67 +1,16 @@
-# Recurring Task — {{Task Title}}
+# Recurring Task Proposal — {{Task title}}
 
-**Household:** {{name}}
-**Assigned to:** {{member or 'household'}}
-**Anchor:** {{DD/MM/YYYY HH:mm}}
-**Authored:** {{DD/MM/YYYY}}
+**Task type:** {{routine or contribution}}
+**Assignee:** {{member from the authorised roster}}
+**First date:** {{YYYY-MM-DD}}
+**Repeat:** {{repeat_unit}}, interval {{repeat_interval}}
+**Days:** {{Sunday=0 through Saturday=6, when used}}
+**Time:** {{contribution due_time or routine time_buckets, if supplied}}
+**End date:** {{repeat_ends_at or none}}
+**Gem value:** {{integer or not set}}
 
----
+Orbrey uses supported recurrence fields, not RRule text. Routine time_buckets are day parts, not exact clock times. A configured gem value is credited on completion.
 
-## Natural-Language Input
+## Confirmation
 
-> {{The user's exact phrasing}}
-
----
-
-## Parsed RRule
-
-```
-DTSTART:{{YYYYMMDD}}T{{HHMMSS}}
-RRULE:{{rule}}
-```
-
-End condition: {{never | UNTIL=YYYYMMDD | COUNT=N}}
-
----
-
-## First 5 Occurrences
-
-| # | Date | Day | Notes |
-|---:|---|---|---|
-| 1 | {{DD/MM/YYYY}} | {{Day}} | {{anchor}} |
-| 2 | {{DD/MM/YYYY}} | {{Day}} | |
-| 3 | {{DD/MM/YYYY}} | {{Day}} | |
-| 4 | {{DD/MM/YYYY}} | {{Day}} | |
-| 5 | {{DD/MM/YYYY}} | {{Day}} | |
-
----
-
-## Exclusions
-
-- **EXDATE:** {{list of YYYYMMDD or "none"}}
-- **Pattern exclusions RRule cannot model:** {{e.g. "school holidays — see plan below"}}
-
-If an occurrence falls on an unmodellable date, the user marks it `skipped` via `orbrey:tasks.set_status`.
-
----
-
-## Confirmation Block
-
-About to create:
-
-```
-Title: {{title}}
-Assigned: {{member}}
-Schedule: {{rule + anchor}}
-First due: {{DD/MM/YYYY HH:mm}}
-End: {{never | until X | count N}}
-Exclusions: {{list}}
-```
-
-Confirm to proceed. Decline to keep this as a draft.
-
----
-
-## Open Items
-
-- [ ] {{Decision needed}}
+No task has been created yet. Confirm the full proposal before creation.
