@@ -7,5 +7,10 @@
   "author": {
     "name": "Orbrey",
     "email": "support@orbrey.com"
-  }
+  },
+  "supportUrl": "https://orbrey.com/help",
+  "homepage": "https://orbrey.com/",
+  "repository": "https://github.com/Orbrey-App/orbrey-skills",
+  "documentationUrl": "https://github.com/Orbrey-App/orbrey-skills/blob/main/plugins/orbrey-claude/README.md",
+  "termsOfServiceUrl": "https://orbrey.com/terms"
 }

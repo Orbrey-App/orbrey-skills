@@ -54,7 +54,7 @@ Each connection is authorised for one household. Re-authorise to change househol
 
 ## Tool and data boundaries
 
-The current MCP registry exposes 63 tools. The [tool inventory](https://github.com/Orbrey-App/orbrey-mcp/blob/main/docs/tool-inventory.md) lists their scopes, read/write behavior, confirmation gates, and MCP App resources. The available tool list is filtered by the current connection's granted scopes. Use returned records and tool descriptions as the source of truth. `household_id` is optional for many tools; supplying a different household ID does not switch the authorisation. Some meal-planning, pantry, and rewards tools may require Orbrey Plus.
+Tool access is filtered by the current connection's granted scopes. Use returned records and tool descriptions as the source of truth. `household_id` is optional for many tools; supplying a different household ID does not switch the authorisation. Some meal-planning, pantry, and rewards tools may require Orbrey Plus.
 
 Rewards are denominated in gems. Task completion applies the configured task reward automatically; wallet adjustments are separate, consequential actions and require explicit user confirmation. Grocery and shared-list tools update Orbrey records only; they do not search retailers or purchase goods.
 
